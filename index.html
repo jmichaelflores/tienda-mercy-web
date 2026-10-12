@@ -600,6 +600,7 @@ if(t.id==='creditClient'){fiadoCliente=t.value;let hint=$('creditHint');if(hint)
 document.addEventListener('change',e=>{if(e.target.id==='receivedPeriodSelect'){receivedPeriod=e.target.value;receivedPage=0;render();return;}if(e.target.id==='payment'){payment=e.target.value;render();}if(e.target.id==='creditPaymentMethod'){fiadoAbonoMetodo=e.target.value;fiadoAbonoRequestId='';}if(e.target.id==='receiveProduct')receiveCode=e.target.value});
 document.addEventListener('click',async e=>{
 let t=e.target.closest('button');if(!t)return;
+if(t.dataset.resetConfirm!==undefined){if(t.dataset.resetConfirm==='yes'){appearance=JSON.parse(JSON.stringify(appearanceDefaults));localStorage.removeItem('mercy_appearance_v1');applyAppearance();mercyCloseOverlay();render();alertMessage('Configuración predeterminada restaurada.')}else mercyCloseOverlay();return}
 if(t.dataset.productDelete!==undefined){if(t.dataset.productDelete==='cancel'){mercyProductToDelete='';mercyCloseOverlay();return}if(!mercyProductToDelete||busy)return;const code=mercyProductToDelete;busy=true;t.disabled=true;const result=await api('eliminarProducto',{codigo:code});busy=false;if(result.ok){mercyProductToDelete='';mercyCloseOverlay();localStorage.removeItem('icon_'+code);await refreshProducts();alertMessage('Producto retirado del catálogo correctamente.')}else{t.disabled=false;alertMessage(result.error||'No se pudo eliminar el producto',true)}return}
 if(t.dataset.mercyReceipt!==undefined){
  if(t.dataset.mercyReceipt==='cancel'){mercyReceiptEdit=null;mercyCloseOverlay();return}
@@ -731,7 +732,7 @@ case 'saveAppearance':{
  let menus={};for(let k of Object.keys(menuDefaults)){let label=document.querySelector('[data-appearance-label="'+k+'"]')?.value.trim();let icon=document.querySelector('[data-appearance-icon="'+k+'"]')?.value.trim();menus[k]={label:label||menuDefaults[k].label,icon:icon||menuDefaults[k].icon}}
  appearance={storeName,storeIcon,primary:$('appearancePrimary').value,secondary:$('appearanceSecondary').value,background:$('appearanceBackground').value,fontScale:appearance.fontScale,menus};
  localStorage.setItem('mercy_appearance_v1',JSON.stringify(appearance));applyAppearance();render();alertMessage('Personalización guardada');break}
-case 'resetAppearance':{if(!confirm('¿Restaurar los colores, nombres e iconos originales?'))break;appearance=JSON.parse(JSON.stringify(appearanceDefaults));localStorage.removeItem('mercy_appearance_v1');applyAppearance();render();alertMessage('Apariencia restaurada');break}
+case 'resetAppearance':{mercyOpenOverlay('<div class="mercy-dialog"><h3>↺ Restaurar configuración</h3><p>¿Estás seguro de que deseas restaurar la configuración predeterminada?</p><p>Se restablecerán los colores, nombres e íconos personalizados. La conexión con Google Sheets no cambiará.</p><div class="actions"><button class="btn ghost" data-reset-confirm="cancel">Cancelar</button><button class="btn" data-reset-confirm="yes">Sí, restaurar</button></div></div>');break}
 case 'saveConfig':{
 window.MercyAndroid?.saveConfig($('url').value,$('token').value);alertMessage('Configuración enviada al dispositivo');break}
 case 'testConfig':{let r=await api('productos');alertMessage(r.ok?'Conexión correcta':r.error||'Error de conexión',!r.ok);break}
