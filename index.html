@@ -369,7 +369,7 @@ function mercyAlerts(){
 }
 function mercyUpdateBadge(){const e=$('mercyBadge');if(!e)return;const n=mercyAlerts().filter(a=>!mercyAlertViewed.has(a.id)).length;e.hidden=n===0;e.textContent=n>99?'99+':n;}
 function mercyOpenOverlay(html){const el=$('mercyOverlay');el.hidden=false;el.innerHTML='<div class="mercy-panel" role="dialog" aria-modal="true">'+html+'</div>';}
-let mercyReceiptEdit=null;
+let mercyReceiptEdit=null;let mercyProductToDelete='';
 function mercyOpenReceiptDialog(m,cancel,sessionIndex){
  mercyReceiptEdit={id:String(m.id),name:String(m.producto||m.name||m.codigo||'Producto'),qty:Number(m.cantidad??m.qty),cost:Number(m.costoUnitario??m.unitCost??0),cancel:!!cancel,sessionIndex:sessionIndex??-1};
  const x=mercyReceiptEdit;
@@ -591,6 +591,7 @@ if(t.id==='creditClient'){fiadoCliente=t.value;let hint=$('creditHint');if(hint)
 document.addEventListener('change',e=>{if(e.target.id==='receivedPeriodSelect'){receivedPeriod=e.target.value;receivedPage=0;render();return;}if(e.target.id==='payment'){payment=e.target.value;render();}if(e.target.id==='creditPaymentMethod'){fiadoAbonoMetodo=e.target.value;fiadoAbonoRequestId='';}if(e.target.id==='receiveProduct')receiveCode=e.target.value});
 document.addEventListener('click',async e=>{
 let t=e.target.closest('button');if(!t)return;
+if(t.dataset.productDelete!==undefined){if(t.dataset.productDelete==='cancel'){mercyProductToDelete='';mercyCloseOverlay();return}if(!mercyProductToDelete||busy)return;const code=mercyProductToDelete;busy=true;t.disabled=true;const result=await api('eliminarProducto',{codigo:code});busy=false;if(result.ok){mercyProductToDelete='';mercyCloseOverlay();localStorage.removeItem('icon_'+code);await refreshProducts();alertMessage('Producto retirado del catálogo correctamente.')}else{t.disabled=false;alertMessage(result.error||'No se pudo eliminar el producto',true)}return}
 if(t.dataset.mercyReceipt!==undefined){
  if(t.dataset.mercyReceipt==='cancel'){mercyReceiptEdit=null;mercyCloseOverlay();return}
  const edit=mercyReceiptEdit;if(!edit||busy)return;
@@ -615,7 +616,7 @@ if(t.dataset.filter){filter=t.dataset.filter;page=0;render();return}
 if(t.dataset.reportsection){reportSection=t.dataset.reportsection;render();$('main').scrollTop=0;return}if(t.dataset.period){period=t.dataset.period;render();return}if(t.dataset.receivedperiod!==undefined){receivedPeriod=t.dataset.receivedperiod;receivedPage=0;render();return}if(t.dataset.inventoryfilter){inventoryFilter=t.dataset.inventoryfilter;inventoryPage=0;page=0;render();return}if(t.dataset.historyperiod){historyPeriod=t.dataset.historyperiod;historyPage=0;render();return}
 if(t.dataset.historyedit!==undefined||t.dataset.historycancel!==undefined){const id=String(t.dataset.historyedit??t.dataset.historycancel);const m=(expenseData?.movimientos||[]).find(x=>String(x.id)===id&&x.fuente==='registrada');if(!m){alertMessage('No se encontró la entrada para corregir.',true);return}mercyOpenReceiptDialog(m,t.dataset.historycancel!==undefined,-1);return}
 if(t.dataset.editreceive!==undefined||t.dataset.deletereceive!==undefined){const index=Number(t.dataset.editreceive??t.dataset.deletereceive),m=movements[index];if(!m?.id){alertMessage('Esta entrada no tiene un identificador válido.',true);return}mercyOpenReceiptDialog(m,t.dataset.deletereceive!==undefined,index);return}
-if(t.dataset.deleteproduct!==undefined){const p=products[Number(t.dataset.deleteproduct)];if(!p)return;if(!confirm('¿Eliminar '+p.nombre+' del catálogo? Se desactivará sin borrar su historial de ventas.'))return;busy=true;const result=await api('eliminarProducto',{codigo:String(p.codigo)});busy=false;if(result.ok){localStorage.removeItem('icon_'+p.codigo);await refreshProducts();alertMessage('Producto retirado del catálogo correctamente.')}else alertMessage(result.error||'No se pudo eliminar el producto',true);return}
+if(t.dataset.deleteproduct!==undefined){const p=products[Number(t.dataset.deleteproduct)];if(!p)return;mercyProductToDelete=String(p.codigo);mercyOpenOverlay('<div class="mercy-dialog"><h3>✕ Eliminar producto</h3><p>¿Quieres retirar <b>'+esc(p.nombre)+'</b> del catálogo?</p><p>El producto dejará de aparecer en el inventario, pero se conservará su historial de ventas.</p><div class="actions"><button class="btn ghost" data-product-delete="cancel">Cancelar</button><button class="btn" data-product-delete="confirm">Eliminar producto</button></div></div>');return}
 if(t.dataset.editproduct!==undefined){productIndex=+t.dataset.editproduct;draft={};go('Formulario producto');return}
 if(t.dataset.editcategory!==undefined){categoryIndex=+t.dataset.editcategory;returnTo='Categorías';draft={};go('Formulario categoría');return}
 if(t.dataset.deletecategory!==undefined){let c=categories[+t.dataset.deletecategory];if(!confirm('¿Eliminar '+c.nombre+'?'))return;let r=await api('eliminarCategoria',{nombre:c.nombre});if(r.ok){go('Categorías')}else alertMessage(r.error||'Error al eliminar',true);return}
