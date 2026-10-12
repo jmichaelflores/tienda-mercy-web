@@ -563,7 +563,14 @@ h+=`<details class="mercy-setting-section"><summary>🎨 Apariencia de la aplica
 }else if(screen==='Más'){
 h+='<h3>Más opciones</h3><div class="card">'+['Mercadería','Reportes','Categorías','Fiados','Ajustes'].map(s=>'<button class="item" style="width:100%;background:white;border-left:0;border-right:0;border-top:0;text-align:left" data-go="'+s+'"><b>'+esc(menuIcon(s))+' '+esc(menuLabel(s))+'</b><span>›</span></button>').join('')+'</div>';
 }
-$('main').innerHTML=h;mercyUpdateBadge();mercyGuideFocus();
+$('main').innerHTML=h;
+const oldSettingsBar=document.getElementById('mercyFixedSettingsBar');
+if(oldSettingsBar)oldSettingsBar.remove();
+if(screen==='Ajustes'){
+ const bar=$('main').querySelector('.mercy-floating-settings');
+ if(bar){bar.id='mercyFixedSettingsBar';document.body.appendChild(bar)}
+}
+mercyUpdateBadge();mercyGuideFocus();
 const quickWrap=$('quickFabWrap');if(quickWrap){const show=['Inicio','Productos','Mercadería','Inventario'].includes(screen)&&!(screen==='Mercadería'&&receiveFormOpen);quickWrap.hidden=!show;if(!show){$('quickFabMenu').hidden=true;$('quickFab').setAttribute('aria-expanded','false')}}
 const fab=$('posFab');
 if(fab){
