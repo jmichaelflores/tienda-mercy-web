@@ -180,7 +180,8 @@ window.MercyAndroid={
  api(id,action,json){let d={};try{d=JSON.parse(json||'{}')}catch(e){}let result={ok:true,data:null};
  try{
  switch(action){
- case 'productos':result.data=state.products;break;
+ case 'productos':result.data=state.products.filter(p=>p.activo!==false).map(p=>({...p,codigo:String(p.codigo)}));break;
+ case 'eliminarProducto':{const code=String(d.codigo||'').trim();const p=state.products.find(p=>String(p.codigo)===code&&p.activo!==false);if(!p)throw Error('Producto no encontrado');p.activo=false;save();result.data={codigo:code,desactivado:true};break}
  case 'categorias':result.data=state.categories;break;
  case 'ultimasVentas':result.data=state.sales;break;
  case 'cuentasPorCobrar':result.data=demoAccounts();break;
