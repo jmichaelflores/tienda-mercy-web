@@ -34,6 +34,23 @@ const initial={
  sales:[],movements:[]
 };
 let state;try{state=JSON.parse(localStorage.getItem(prefix))||structuredClone(initial)}catch(e){state=JSON.parse(JSON.stringify(initial))}
+
+state.fiados=state.fiados||[];state.abonos=state.abonos||[];
+function demoRound(n){return Math.round(Number(n)*100)/100}
+function demoKey(s){return String(s||'').trim().replace(/\s+/g,' ').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'')}
+function demoAccounts(){
+ const paid={};for(const a of state.abonos)paid[a.idFiado]=demoRound((paid[a.idFiado]||0)+a.monto);
+ const clients={},ventas=[],abonos=state.abonos,totalFiado=state.fiados.reduce((n,v)=>n+v.total,0);
+ for(const fiado of state.fiados){
+  const v={...fiado,saldo:demoRound(Math.max(0,fiado.total-(paid[fiado.id]||0))),pagado:demoRound(paid[fiado.id]||0),metodoPago:'Fiado',articulos:fiado.items.reduce((n,x)=>n+x.cantidad,0)};
+  ventas.push(v);let c=clients[v.clave];if(!c)c=clients[v.clave]={clave:v.clave,nombre:v.cliente,totalFiado:0,totalAbonado:0,saldo:0,ventas:[],productos:[],abonos:[]};
+  c.nombre=v.cliente;c.totalFiado=demoRound(c.totalFiado+v.total);c.totalAbonado=demoRound(c.totalAbonado+v.pagado);c.saldo=demoRound(c.saldo+v.saldo);c.ventas.push(v);
+  for(const p of v.items){let found=c.productos.find(x=>x.codigo===p.codigo);if(!found){found={codigo:p.codigo,nombre:p.nombre,cantidad:0,total:0};c.productos.push(found)}found.cantidad+=p.cantidad;found.total=demoRound(found.total+p.subtotal)}
+ }
+ for(const a of abonos)if(clients[a.clave])clients[a.clave].abonos.push(a);
+ const totalCobrado=demoRound(abonos.reduce((n,a)=>n+a.monto,0));
+ return {clientes:Object.values(clients).sort((a,b)=>b.saldo-a.saldo),ventas,abonos,totalFiado:demoRound(totalFiado),totalCobrado,totalPendiente:demoRound(totalFiado-totalCobrado)};
+}
 function save(){try{localStorage.setItem(prefix,JSON.stringify(state))}catch(e){}}
 function respond(id,result){setTimeout(()=>window.MercyReceive?.(id,result),0)}
 window.MercyAndroid={
@@ -43,12 +60,30 @@ window.MercyAndroid={
  case 'productos':result.data=state.products;break;
  case 'categorias':result.data=state.categories;break;
  case 'ultimasVentas':result.data=state.sales;break;
+ case 'cuentasPorCobrar':result.data=demoAccounts();break;
+ case 'registrarFiado':{
+ const nombre=String(d.cliente||'').trim(),key=demoKey(nombre),request=String(d.solicitudId||'');if(nombre.length<2||!request)throw Error('Indica el nombre del cliente');
+ let found=state.fiados.find(v=>v.solicitudId===request);if(found){result.data={id:found.id,total:found.total,duplicado:true};break}
+ const items=d.items||d.productos||[];if(!items.length)throw Error('Carrito vacío');let lines=[],total=0;
+ for(const it of items){const p=state.products.find(x=>x.codigo===it.codigo),q=Number(it.cantidad);if(!p||!Number.isInteger(q)||q<1||p.existencia<q)throw Error('Existencias insuficientes');const subtotal=demoRound(Number(p.precio)*q);total+=subtotal;lines.push({codigo:p.codigo,nombre:p.nombre,cantidad:q,precio:p.precio,subtotal})}
+ total=demoRound(total);if(total<=0)throw Error('El total debe ser mayor que cero');
+ for(const it of items)state.products.find(p=>p.codigo===it.codigo).existencia-=Number(it.cantidad);
+ const fiado={id:'FI-DEMO-'+Date.now()+'-'+Math.random().toString(36).slice(2,6),solicitudId:request,fecha:new Date().toISOString(),cliente:nombre,clave:key,total,items:lines};state.fiados.push(fiado);save();result.data={id:fiado.id,total,cliente:nombre};break
+ }
+ case 'registrarAbonoFiado':{
+ const key=demoKey(d.clave||d.cliente),monto=demoRound(d.monto),idPago=String(d.idPago||''),metodo=String(d.metodo||'Efectivo');if(!key||!idPago||monto<=0||!['Efectivo','Transferencia'].includes(metodo))throw Error('Abono inválido');
+ if(state.abonos.some(a=>a.idPago===idPago)){result.data={duplicado:true,idPago};break}
+ const bills=state.fiados.filter(v=>v.clave===key).sort((a,b)=>a.fecha.localeCompare(b.fecha)),due=demoRound(bills.reduce((n,v)=>n+v.total-state.abonos.filter(a=>a.idFiado===v.id).reduce((p,a)=>p+a.monto,0),0));if(monto>due)throw Error('Abono mayor al saldo');
+ let left=Math.round(monto*100);for(const bill of bills){const paid=state.abonos.filter(a=>a.idFiado===bill.id).reduce((n,a)=>n+a.monto,0),available=Math.round((bill.total-paid)*100),take=Math.min(left,available);if(take<=0)continue;state.abonos.push({idPago,fecha:new Date().toISOString(),clave:key,cliente:bill.cliente,idFiado:bill.id,monto:take/100,metodo});left-=take;if(left<=0)break}
+ save();result.data={idPago,monto};break
+ }
+
  case 'egresosMercaderia':result.data={total:state.movements.reduce((n,m)=>n+m.costo,0),movimientos:state.movements};break;
  case 'guardarProducto':{const index=state.products.findIndex(p=>p.codigo===d.codigo);const p={...state.products[index],...d,existencia:state.products[index]?.existencia||0,activo:true};if(index>=0)state.products[index]=p;else state.products.push(p);save();break}
  case 'guardarCategoria':{const index=state.categories.findIndex(c=>c.nombre===(d.anterior||d.nombre));const c={nombre:d.nombre,descripcion:d.descripcion||'',icono:d.icono||'📁',activo:true};if(index>=0)state.categories[index]=c;else state.categories.push(c);save();break}
  case 'eliminarCategoria':{state.categories=state.categories.filter(c=>c.nombre!==d.nombre);save();break}
  case 'recibirMercaderia':{const p=state.products.find(p=>p.codigo===d.codigo);if(!p)throw Error('Producto no encontrado');p.existencia+=Number(d.cantidad);state.movements.unshift({fecha:new Date().toISOString(),codigo:p.codigo,cantidad:Number(d.cantidad),costo:Number(p.costo||0)*Number(d.cantidad)});save();break}
- case 'registrarVenta':{const items=d.items||d.productos||[];let total=0;for(const item of items){const p=state.products.find(p=>p.codigo===item.codigo);if(!p||Number(p.existencia)<Number(item.cantidad))throw Error('Existencias insuficientes');total+=Number(p.precio)*Number(item.cantidad)}for(const item of items)state.products.find(p=>p.codigo===item.codigo).existencia-=Number(item.cantidad);state.sales.unshift({id:'DEMO-'+Date.now(),fecha:new Date().toISOString(),total,articulos:items.reduce((n,x)=>n+Number(x.cantidad),0),recibido:d.recibido||total});save();result.data={total};break}
+ case 'registrarVenta':{const items=d.items||d.productos||[];let total=0;for(const item of items){const p=state.products.find(p=>p.codigo===item.codigo);if(!p||Number(p.existencia)<Number(item.cantidad))throw Error('Existencias insuficientes');total+=Number(p.precio)*Number(item.cantidad)}for(const item of items)state.products.find(p=>p.codigo===item.codigo).existencia-=Number(item.cantidad);state.sales.unshift({id:'DEMO-'+Date.now(),fecha:new Date().toISOString(),total,articulos:items.reduce((n,x)=>n+Number(x.cantidad),0),recibido:d.recibido||total,metodoPago:d.metodoPago||'Efectivo'});save();result.data={total};break}
  default:throw Error('Acción no disponible en la demostración');
  }
  }catch(e){result={ok:false,error:e.message||'Error de demostración'}}
