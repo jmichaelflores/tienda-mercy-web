@@ -144,7 +144,7 @@ window.MercyAndroid={
  const nombre=String(d.cliente||'').trim(),key=demoKey(nombre),request=String(d.solicitudId||'');if(nombre.length<2||!request)throw Error('Indica el nombre del cliente');
  let found=state.fiados.find(v=>v.solicitudId===request);if(found){result.data={id:found.id,total:found.total,duplicado:true};break}
  const items=d.items||d.productos||[];if(!items.length)throw Error('Carrito vacío');let lines=[],total=0;
- for(const it of items){const p=state.products.find(x=>x.codigo===it.codigo),q=Number(it.cantidad);if(!p||!Number.isInteger(q)||q<1||p.existencia<q)throw Error('Existencias insuficientes');const subtotal=demoRound(Number(p.precio)*q);total+=subtotal;lines.push({codigo:p.codigo,nombre:p.nombre,cantidad:q,precio:p.precio,subtotal})}
+ for(const it of items){const p=state.products.find(x=>x.codigo===it.codigo),q=Number(it.cantidad);if(!p||!Number.isInteger(q)||q<1||p.existencia<q)throw Error('Existencias insuficientes');const subtotal=demoRound(Number(p.precio)*q);total+=subtotal;lines.push({codigo:p.codigo,nombre:p.nombre,cantidad:q,precio:p.precio,subtotal,costoUnitario:p.costo==null?null:Number(p.costo),costoTotal:p.costo==null?null:demoRound(Number(p.costo)*q)})}
  total=demoRound(total);if(total<=0)throw Error('El total debe ser mayor que cero');
  for(const it of items)state.products.find(p=>p.codigo===it.codigo).existencia-=Number(it.cantidad);
  const fiado={id:'FI-DEMO-'+Date.now()+'-'+Math.random().toString(36).slice(2,6),solicitudId:request,fecha:new Date().toISOString(),cliente:nombre,clave:key,total,items:lines};state.fiados.push(fiado);save();result.data={id:fiado.id,total,cliente:nombre};break
@@ -157,12 +157,21 @@ window.MercyAndroid={
  save();result.data={idPago,monto};break
  }
 
- case 'egresosMercaderia':result.data={total:state.movements.reduce((n,m)=>n+m.costo,0),movimientos:state.movements};break;
+ case 'egresosMercaderia':result.data={total:state.movements.reduce((n,m)=>n+Number(m.costo||0),0),movimientos:state.movements,sinCosto:state.movements.filter(m=>m.costo==null).length,estimados:0,pendientes:0};break;
+ case 'costosVentas':result.data={ventas:state.sales.map(v=>({id:v.id,fecha:v.fecha,metodoPago:v.metodoPago||'Efectivo',total:v.total,costoTotal:v.costoTotal===undefined?null:v.costoTotal,items:v.items||[]})),sinCosto:state.sales.filter(v=>v.costoTotal==null).length,pendientes:0};break;
  case 'guardarProducto':{const index=state.products.findIndex(p=>p.codigo===d.codigo);const p={...state.products[index],...d,existencia:state.products[index]?.existencia||0,activo:true};if(index>=0)state.products[index]=p;else state.products.push(p);save();break}
  case 'guardarCategoria':{const index=state.categories.findIndex(c=>c.nombre===(d.anterior||d.nombre));const c={nombre:d.nombre,descripcion:d.descripcion||'',icono:d.icono||'📁',activo:true};if(index>=0)state.categories[index]=c;else state.categories.push(c);save();break}
  case 'eliminarCategoria':{state.categories=state.categories.filter(c=>c.nombre!==d.nombre);save();break}
- case 'recibirMercaderia':{const p=state.products.find(p=>p.codigo===d.codigo);if(!p)throw Error('Producto no encontrado');p.existencia+=Number(d.cantidad);state.movements.unshift({fecha:new Date().toISOString(),codigo:p.codigo,cantidad:Number(d.cantidad),costo:Number(p.costo||0)*Number(d.cantidad)});save();break}
- case 'registrarVenta':{const items=d.items||d.productos||[];let total=0;for(const item of items){const p=state.products.find(p=>p.codigo===item.codigo);if(!p||Number(p.existencia)<Number(item.cantidad))throw Error('Existencias insuficientes');total+=Number(p.precio)*Number(item.cantidad)}for(const item of items)state.products.find(p=>p.codigo===item.codigo).existencia-=Number(item.cantidad);state.sales.unshift({id:'DEMO-'+Date.now(),fecha:new Date().toISOString(),total,articulos:items.reduce((n,x)=>n+Number(x.cantidad),0),recibido:d.recibido||total,metodoPago:d.metodoPago||'Efectivo'});save();result.data={total};break}
+ case 'recibirMercaderia':{const p=state.products.find(p=>p.codigo===d.codigo),qty=Number(d.cantidad),raw=d.costoUnitario!==undefined?d.costoUnitario:p?.costo,cost=Number(raw);if(!p)throw Error('Producto no encontrado');if(!Number.isInteger(qty)||qty<=0||raw===null||raw===''||!Number.isFinite(cost)||cost<0)throw Error('Cantidad o costo de compra inválido');const repeated=d.solicitudId&&state.movements.find(m=>m.id===d.solicitudId);if(repeated){result.data={duplicado:true,total:repeated.costo};break;}p.existencia+=qty;const expense={id:d.solicitudId||('DEMO-REC-'+Date.now()),fecha:new Date().toISOString(),codigo:p.codigo,producto:p.nombre,cantidad:qty,costoUnitario:cost,costo:demoRound(cost*qty),fuente:'registrada'};state.movements.unshift(expense);save();result.data={total:expense.costo};break}
+ case 'registrarVenta':{
+ const items=d.items||d.productos||[],request=String(d.solicitudId||'');
+ const duplicate=request&&state.sales.find(v=>v.solicitudId===request);if(duplicate){result.data={total:duplicate.total,duplicado:true};break}
+ let total=0,costTotal=0,missingCost=false,lines=[];
+ for(const item of items){const p=state.products.find(p=>p.codigo===item.codigo),q=Number(item.cantidad);if(!p||!Number.isInteger(q)||q<1||Number(p.existencia)<q)throw Error('Existencias insuficientes');const subtotal=demoRound(Number(p.precio)*q),lineCost=p.costo==null?null:demoRound(Number(p.costo)*q);total+=subtotal;if(lineCost===null)missingCost=true;else costTotal+=lineCost;lines.push({codigo:p.codigo,nombre:p.nombre,cantidad:q,precio:p.precio,subtotal,costoUnitario:p.costo??null,costoTotal:lineCost})}
+ for(const item of items)state.products.find(p=>p.codigo===item.codigo).existencia-=Number(item.cantidad);
+ total=demoRound(total);state.sales.unshift({id:'DEMO-'+Date.now(),solicitudId:request,fecha:new Date().toISOString(),total,costoTotal:missingCost?null:demoRound(costTotal),items:lines,articulos:items.reduce((n,x)=>n+Number(x.cantidad),0),recibido:d.recibido||total,metodoPago:d.metodoPago||'Efectivo'});save();result.data={total};break
+ }
+
  default:throw Error('Acción no disponible en la demostración');
  }
  }catch(e){result={ok:false,error:e.message||'Error de demostración'}}
