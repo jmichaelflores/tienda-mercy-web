@@ -484,6 +484,19 @@ header .mercy-header-actions .mercy-icon-btn{background:#ffffffed;color:var(--pi
 .mercy-rank-layout-spotlight .mercy-rank-winner{background:color-mix(in srgb,var(--pink) 25%,white)}
 #mercyRankingPreviewBody .mercy-rank-layout-neon{color:#fff!important}
 #mercyRankingPreviewBody .mercy-rank-variant-list{overflow:hidden!important}
+</style><style id="mercy-keyboard-responsive-v1">
+:root{--mercy-visible-height:100dvh;--mercy-keyboard-inset:0px}
+html{scroll-padding-bottom:90px}
+body{min-width:0}
+.mercy-overlay{height:var(--mercy-visible-height);max-height:var(--mercy-visible-height);bottom:auto;overflow:hidden;align-items:center;padding:12px 16px}
+.mercy-overlay .mercy-panel{max-height:calc(var(--mercy-visible-height) - 24px)!important;overflow-y:auto!important;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+.mercy-overlay .mercy-dialog{max-height:calc(var(--mercy-visible-height) - 55px);overflow-y:auto;overscroll-behavior:contain}
+body.mercy-keyboard-open .mercy-overlay{align-items:flex-start;padding:8px 12px}
+body.mercy-keyboard-open .mercy-overlay .mercy-panel{max-height:calc(var(--mercy-visible-height) - 16px)!important;border-radius:16px}
+body.mercy-keyboard-open .mercy-overlay .mercy-dialog{max-height:calc(var(--mercy-visible-height) - 45px)}
+body.mercy-keyboard-open #quickFabWrap,body.mercy-keyboard-open #backToTop{visibility:hidden!important;pointer-events:none!important}
+input,textarea,select{scroll-margin-top:65px;scroll-margin-bottom:85px}
+@media(max-width:600px){input:not([type=checkbox]):not([type=radio]),textarea,select{font-size:max(16px,1em)}}
 </style></head><body><header><button type="button" class="brand-row mercy-brand-home" data-go="Inicio" aria-label="Ir al inicio de la tienda"><span id="storeLogo" class="brand-logo">🏪</span><span class="brand-copy"><strong id="title">Tienda Mercy</strong><small>Gestión de tienda e inventario</small></span></button><div class="mercy-header-actions"><button type="button" id="mercyGuideButton" class="mercy-icon-btn" aria-label="Iniciar guía interactiva" title="Guía de uso">❔</button><button type="button" id="mercyBellButton" class="mercy-icon-btn" aria-label="Ver notificaciones" title="Notificaciones">🔔<span id="mercyBadge" class="mercy-badge" hidden></span></button></div></header><main id="main"></main><div id="mercyToastStack" class="mercy-toast-stack" role="status" aria-live="polite"></div><div id="quickFabWrap" class="quick-fab-wrap" hidden><div id="quickFabMenu" class="quick-fab-menu" hidden><button type="button" data-action="quickNewProduct">📦 Nuevo producto</button><button type="button" data-action="quickReceive">📥 Recibir mercadería</button></div><button id="quickFab" type="button" data-action="toggleQuickFab" aria-label="Abrir acciones rápidas" aria-expanded="false">+</button></div><button id="posFab" type="button" data-action="openPosCart" aria-label="Ver carrito y finalizar compra"><span class="fab-icon">🛒</span><span class="fab-details">Ver carrito</span></button><button id="up" aria-label="Volver arriba">↑</button><nav id="nav"></nav><div id="mercyOverlay" class="mercy-overlay" hidden></div><div id="mercyTour" class="mercy-tour" hidden></div>
 <script>
 /* Vista web independiente: SOLO DEMO, sin conexión ni escritura en Google Sheets. */
@@ -1409,4 +1422,37 @@ $('main').addEventListener('touchend',e=>{if(mercySwipeX===null)return;const dx=
 let startY=0;$('main').addEventListener('touchstart',e=>{if($('main').scrollTop===0)startY=e.touches[0].clientY},{passive:true});$('main').addEventListener('touchend',e=>{if(startY&&$('main').scrollTop===0&&e.changedTouches[0].clientY-startY>100){startY=0;load(screen)}},{passive:true});
 $('main').addEventListener('scroll',()=>{$('up').style.display=$('main').scrollTop>420?'block':'none'});$('up').onclick=()=>$('main').scrollTo({top:0,behavior:'smooth'});
 render();refreshProducts();refreshSales();refreshCategories();refreshAccounts();
+</script><script id="mercy-keyboard-viewport-v1">
+(function(){
+ const root=document.documentElement;
+ let baseline=Math.max(window.innerHeight,document.documentElement.clientHeight);
+ let lastFocused=null;
+ function sync(){
+  const v=window.visualViewport;
+  const height=v?Math.round(v.height):window.innerHeight;
+  const offset=v?Math.round(v.offsetTop):0;
+  const visible=Math.max(180,height);
+  const keyboard=baseline-visible>130&&!!document.activeElement&&/^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement.tagName);
+  root.style.setProperty('--mercy-visible-height',visible+'px');
+  root.style.setProperty('--mercy-keyboard-inset',Math.max(0,baseline-visible)+'px');
+  const overlay=document.getElementById('mercyOverlay');
+  if(overlay&&!overlay.hidden){overlay.style.top=offset+'px';}
+  document.body.classList.toggle('mercy-keyboard-open',keyboard);
+ }
+ function ensureVisible(){
+  const el=document.activeElement;
+  if(!el||!el.matches||!el.matches('input,textarea,select,[contenteditable=true]'))return;
+  const viewport=window.visualViewport;
+  const height=viewport?viewport.height:window.innerHeight;
+  const top=viewport?viewport.offsetTop:0;
+  const rect=el.getBoundingClientRect();
+  if(rect.bottom>top+height-18||rect.top<top+10)el.scrollIntoView({block:'center',behavior:'instant'});
+ }
+ if(window.visualViewport){window.visualViewport.addEventListener('resize',()=>{sync();ensureVisible()});window.visualViewport.addEventListener('scroll',sync)}
+ window.addEventListener('resize',sync);
+ document.addEventListener('focusin',e=>{if(e.target.matches?.('input,textarea,select,[contenteditable=true]')){lastFocused=e.target;requestAnimationFrame(sync)}});
+ document.addEventListener('focusout',()=>requestAnimationFrame(sync));
+ document.addEventListener('DOMContentLoaded',sync);
+ sync();
+})();
 </script></body></html>
