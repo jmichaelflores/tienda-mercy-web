@@ -294,6 +294,22 @@ header .mercy-header-actions .mercy-icon-btn{background:#ffffffed;color:var(--pi
 .mercy-card-style30{border-radius:10px 28px 10px 28px!important}
 .mercy-slider-preview-card.mercy-card-design{background:var(--mercy-card-bg)!important;color:var(--mercy-card-fg)!important;border-radius:20px;box-shadow:0 8px 22px #0002}
 @media(prefers-reduced-motion:reduce){.mercy-card-design{transition:none!important}}
+</style><style id="mercy-custom-combobox-v3">
+.mercy-native-select-hidden{position:absolute!important;width:1px!important;height:1px!important;opacity:0!important;pointer-events:none!important;overflow:hidden!important}
+.mercy-combo-button{width:100%;min-height:46px;display:flex;align-items:center;justify-content:space-between;gap:12px;text-align:left;background:var(--card,#fff);color:var(--ink,#263832);border:1px solid var(--line,#d8e0df);border-radius:13px;padding:11px 13px;font:inherit;margin:4px 0 12px;box-shadow:0 2px 7px #00000008}
+.mercy-combo-button:focus-visible{outline:2px solid var(--pink);outline-offset:2px}.mercy-combo-button .mercy-combo-arrow{color:var(--pink);flex-shrink:0}
+.mercy-combo-dialog{width:min(100%,460px);max-height:min(85dvh,730px);display:flex;flex-direction:column;gap:12px;overflow:hidden}
+.mercy-combo-dialog h3{margin:0}.mercy-combo-list{overflow-y:auto;min-height:0;overscroll-behavior:contain;display:flex;flex-direction:column;gap:5px;padding:2px 3px 8px}
+.mercy-combo-option{width:100%;display:flex;align-items:center;gap:12px;border:1px solid var(--line,#e1e5e6);background:var(--card,#fff);color:var(--ink,#263832);padding:11px 12px;border-radius:12px;text-align:left;font:inherit;min-height:46px}
+.mercy-combo-option.active{border-color:var(--pink);background:color-mix(in srgb,var(--pink) 9%,white)}.mercy-combo-option .mercy-combo-check{margin-left:auto;color:var(--pink)}
+.mercy-combo-search{width:100%;border-radius:12px;border:1px solid var(--line);padding:11px;background:white;color:#263832;font:inherit}
+.mercy-combo-swatch{height:25px;width:36px;border-radius:8px;flex-shrink:0;border:1px solid #0002}
+.mercy-preview-control{display:flex;gap:8px;align-items:center}.mercy-preview-control>button{flex:1;min-width:0}
+.mercy-preview-examples{display:flex;gap:7px;flex-wrap:wrap}.mercy-preview-examples button{padding:8px 10px;border-radius:12px;border:1px solid var(--line);background:white;color:#263832;font:inherit;font-size:12px}
+.mercy-preview-examples button.active{border-color:var(--pink);color:var(--pink)}
+.mercy-preview-demo{display:flex;flex-direction:column;align-items:stretch;justify-content:center;gap:9px;text-align:left;padding:20px!important;min-height:170px}
+.mercy-preview-demo strong{font-size:21px}.mercy-preview-demo span{font-size:13px}
+.mercy-preview-dialog{max-height:85dvh;overflow-y:auto}
 </style></head><body><header><button type="button" class="brand-row mercy-brand-home" data-go="Inicio" aria-label="Ir al inicio de la tienda"><span id="storeLogo" class="brand-logo">🏪</span><span class="brand-copy"><strong id="title">Tienda Mercy</strong><small>Gestión de tienda e inventario</small></span></button><div class="mercy-header-actions"><button type="button" id="mercyGuideButton" class="mercy-icon-btn" aria-label="Iniciar guía interactiva" title="Guía de uso">❔</button><button type="button" id="mercyBellButton" class="mercy-icon-btn" aria-label="Ver notificaciones" title="Notificaciones">🔔<span id="mercyBadge" class="mercy-badge" hidden></span></button></div></header><main id="main"></main><div id="mercyToastStack" class="mercy-toast-stack" role="status" aria-live="polite"></div><div id="quickFabWrap" class="quick-fab-wrap" hidden><div id="quickFabMenu" class="quick-fab-menu" hidden><button type="button" data-action="quickNewProduct">📦 Nuevo producto</button><button type="button" data-action="quickReceive">📥 Recibir mercadería</button></div><button id="quickFab" type="button" data-action="toggleQuickFab" aria-label="Abrir acciones rápidas" aria-expanded="false">+</button></div><button id="posFab" type="button" data-action="openPosCart" aria-label="Ver carrito y finalizar compra"><span class="fab-icon">🛒</span><span class="fab-details">Ver carrito</span></button><button id="up" aria-label="Volver arriba">↑</button><nav id="nav"></nav><div id="mercyOverlay" class="mercy-overlay" hidden></div><div id="mercyTour" class="mercy-tour" hidden></div>
 <script>
 /* Vista web independiente: SOLO DEMO, sin conexión ni escritura en Google Sheets. */
@@ -858,9 +874,16 @@ const navCartQty=Object.values(cart).reduce((sum,qty)=>sum+Math.max(0,Number(qty
 }
 document.addEventListener('input',e=>{let t=e.target;if(t.dataset.appearanceIcon!==undefined){const preview=[...document.querySelectorAll('[data-preview-emoji]')].find(x=>x.dataset.previewEmoji===t.dataset.appearanceIcon);if(preview)preview.textContent=t.value;}
 if(t.id==='creditClient'){fiadoCliente=t.value;let hint=$('creditHint');if(hint)hint.textContent=fiadoHintText();}if(t.id==='creditPaymentAmount'){fiadoAbonoMonto=t.value;fiadoAbonoRequestId='';}if(t.id==='fiadosSearch'){fiadoSearch=t.value;let position=t.selectionStart;render();let x=$('fiadosSearch');if(x){x.focus();x.setSelectionRange(position,position)}return;}if(t.id==='fontScaleSlider'){appearance.fontScale=Number(t.value)/100;document.documentElement.style.setProperty('--font-scale',String(appearance.fontScale));localStorage.setItem('mercy_appearance_v1',JSON.stringify(appearance));let label=$('fontScaleValue');if(label)label.textContent=t.value+'%';return;}if(t.dataset.field)draft[t.dataset.field]=t.value;if(t.id==='received'){received=t.value;let total=Object.entries(cart).reduce((n,[code,q])=>n+Number(products.find(p=>p.codigo===code)?.precio||0)*q,0);let el=$('changeAmount');if(el)el.textContent=money(Math.max(0,Number(received||0)-total));return}if(t.id==='receiveCode'){if(t.value!==receiveCode){receiveCode=t.value;receiveCostCode='';receiveCost='';receiveRequestId=''}return}if(t.id==='receiveSearch'){let pos=t.selectionStart;receiveSearch=t.value;receivePage=0;render();let x=$('receiveSearch');x.focus();x.setSelectionRange(pos,pos);return}if(t.id==='receiveQty'||t.id==='receiveCost'){if(t.id==='receiveQty')receiveQty=t.value;else{receiveCost=t.value;receiveCostCode=receiveCode;}receiveRequestId='';let total=$('receiveTotalPreview'),cost=Number(t.id==='receiveCost'?receiveCost:currentReceiveCost());if(total)total.textContent=currentReceiveCost()!==''&&isFinite(cost)&&cost>=0?money(cost*Number(receiveQty||0)):'Pendiente';return}if(t.id==='receivedSearch'){const pos=t.selectionStart;receivedQuery=t.value;receivedPage=0;render();const x=$('receivedSearch');if(x){x.focus();x.setSelectionRange(pos,pos)}return}if(t.id==='inventorySearch'){let pos=t.selectionStart;inventoryQuery=t.value;inventoryPage=0;render();let x=$('inventorySearch');x.focus();x.setSelectionRange(pos,pos);return}if(t.id==='search'||t.id==='saleSearch'){let id=t.id,pos=t.selectionStart,value=t.value;if(id==='search'){query=value;page=0}else{saleQuery=value;posPage=0}clearTimeout(mercySearchTimer);mercySearchTimer=setTimeout(()=>{render();let x=$(id);if(x){x.focus();x.setSelectionRange(Math.min(pos,x.value.length),Math.min(pos,x.value.length))}},160)}});
+document.addEventListener('input',e=>{if(e.target.id==='mercyComboSearch')mercyFilterCombo(e.target.value)});
 document.addEventListener('change',e=>{if(e.target.id==='receivedPeriodSelect'){receivedPeriod=e.target.value;receivedPage=0;render();return;}if(e.target.id==='payment'){payment=e.target.value;render();}if(e.target.id==='creditPaymentMethod'){fiadoAbonoMetodo=e.target.value;fiadoAbonoRequestId='';}if(e.target.id==='receiveProduct')receiveCode=e.target.value});
 document.addEventListener('click',async e=>{
 let t=e.target.closest('button');if(!t)return;
+if(t.dataset.mercyComboOpen!==undefined){const select=t.previousElementSibling;if(select?.tagName==='SELECT')mercyOpenCombo(select,false);return}
+if(t.dataset.mercyPreviewPick!==undefined){mercyOpenPreviewCombo();return}
+if(t.dataset.mercyComboClose!==undefined){mercyCloseCombo();return}
+if(t.dataset.mercyComboOption!==undefined){mercyChooseCombo(Number(t.dataset.mercyComboOption));return}
+if(t.dataset.mercyPreviewSample!==undefined){mercyPreviewState.sample=Number(t.dataset.mercyPreviewSample);mercyRenderUnifiedPreview();return}
+if(t.dataset.mercyPreviewReplay!==undefined){mercyUpdatePreviewDemo();return}
 if(t.dataset.sliderCardPreview!==undefined){mercyCardPreview();return}
 if(t.dataset.sliderEffectPreview!==undefined){mercyPreviewSliderEffect();return}
 if(t.dataset.sliderPreviewClose!==undefined){mercyCloseOverlay();return}
@@ -1039,7 +1062,47 @@ let mercyRandomCard='style1',mercyRandomEffect='slide';
 function mercyPickRandom(options,previous){if(options.length<2)return options[0];let next=options[Math.floor(Math.random()*options.length)];if(next===previous)next=options[(options.indexOf(next)+1+Math.floor(Math.random()*(options.length-1)))%options.length];return next}
 function mercyNextCarouselChoices(){if(appearance.sliderCardStyle==='random')mercyRandomCard=mercyPickRandom(mercyCardIds,mercyRandomCard);if(appearance.sliderEffect==='random')mercyRandomEffect=mercyPickRandom(mercyTransitionIds,mercyRandomEffect)}
 function mercyCurrentCardStyle(){const selected=appearance.sliderCardStyle||'style1';return mercyCardIds.includes(selected)?selected:selected==='random'?mercyRandomCard:'style1'}
-function mercyCardPreview(){const selected=$('settingSliderCardStyle')?.value||'style1';const chosen=selected==='random'?mercyPickRandom(mercyCardIds,mercyRandomCard):selected;const index=Math.max(0,mercyCardIds.indexOf(chosen));mercyOpenOverlay('<div class="mercy-dialog"><h3>🎨 Vista previa de tarjeta</h3><p class="muted">'+esc(mercyCardStyles[index])+(selected==='random'?' · selección al azar':'')+'</p><div class="mercy-slider-preview-stage"><div class="mercy-slider-preview-card mercy-card-design mercy-card-'+chosen+'"><span>🛍️</span><strong>¡Bienvenida a Tienda Mercy!</strong><span>Organiza, vende y haz crecer tu negocio.</span></div></div><div class="actions"><button type="button" class="btn ghost" data-slider-preview-close="1">Cerrar</button><button type="button" class="btn" data-slider-card-preview="1">↻ Otra muestra</button></div></div>')}
+const mercyPreviewSamples=[
+ {icon:'👋',title:'¡Hola, Mercy!',subtitle:'Bienvenida a tu tienda. Hoy es un gran día para vender.',metric:'INICIO'},
+ {icon:'🔥',title:'Más vendidos',subtitle:'Coca-Cola 600 ml · 38 unidades vendidas',metric:'TOP PRODUCTOS'},
+ {icon:'💰',title:'Mayor ganancia',subtitle:'Producto destacado · $125.40 de ganancia',metric:'RENTABILIDAD'},
+ {icon:'📦',title:'Sin ventas registradas',subtitle:'Descubre qué productos necesitan mayor atención.',metric:'INVENTARIO'}
+];
+let mercyPreviewState={kind:'card',style:'style1',effect:'slide',speed:'normal',sample:0};
+function mercyPreviewSelectButton(kind){
+ const isCard=kind==='card',selected=isCard?mercyPreviewState.style:mercyPreviewState.effect;
+ const names=isCard?mercyCardStyles:mercyTransitionIds.map(x=>({slide:'Deslizamiento',stack:'Stack',cube:'Cubo 3D',coverflow:'Coverflow',fade:'Fade',zoom:'Zoom',flip:'Flip 3D',vertical:'Vertical',spring:'Spring'})[x]);
+ const idx=isCard?mercyCardIds.indexOf(selected):mercyTransitionIds.indexOf(selected);
+ return '<button type="button" class="mercy-combo-button" data-mercy-preview-pick="'+kind+'"><span>'+(selected==='random'?'🎲 Al azar':esc(names[Math.max(0,idx)]))+'</span><span class="mercy-combo-arrow">⌄</span></button>'
+}
+function mercyShowUnifiedPreview(kind){
+ const isCard=kind==='card';
+ mercyPreviewState.kind=kind;
+ mercyPreviewState.style=$('settingSliderCardStyle')?.value||mercyPreviewState.style||'style1';
+ mercyPreviewState.effect=$('settingSliderEffect')?.value||mercyPreviewState.effect||'slide';
+ mercyPreviewState.speed=$('settingSliderSpeed')?.value||'normal';
+ mercyPreviewState.sample=0;
+ mercyRenderUnifiedPreview();
+}
+function mercyRenderUnifiedPreview(){
+ const kind=mercyPreviewState.kind,isCard=kind==='card';
+ const buttons=mercyPreviewSamples.map((x,i)=>'<button type="button" data-mercy-preview-sample="'+i+'" class="'+(mercyPreviewState.sample===i?'active':'')+'">'+esc(x.metric)+'</button>').join('');
+ mercyOpenOverlay('<div class="mercy-dialog mercy-preview-dialog"><div class="row"><h3>'+(isCard?'🎨 Diseños de tarjetas':'🎠 Efectos de transición')+'</h3><button type="button" class="small" data-slider-preview-close="1">✕</button></div><p class="muted">Cambia el estilo y el ejemplo sin cerrar esta ventana. La selección se aplica a los ajustes, pero no se guarda hasta pulsar Guardar.</p><label>'+(isCard?'Diseño de tarjeta':'Efecto de transición')+'</label>'+mercyPreviewSelectButton(kind)+'<div class="mercy-preview-examples">'+buttons+'</div><div class="mercy-slider-preview-stage"><div id="mercyPreviewDemo" class="mercy-slider-preview-card mercy-preview-demo"><span></span><strong></strong><span></span><small></small></div></div><div class="actions"><button type="button" class="btn ghost" data-mercy-preview-replay="1">↻ Repetir</button><button type="button" class="btn" data-slider-preview-close="1">Listo</button></div></div>');
+ mercyUpdatePreviewDemo();
+}
+function mercyUpdatePreviewDemo(){
+ const el=$('mercyPreviewDemo');if(!el)return;
+ const x=mercyPreviewSamples[mercyPreviewState.sample]||mercyPreviewSamples[0];
+ const card=mercyPreviewState.style==='random'?mercyPickRandom(mercyCardIds,mercyRandomCard):mercyPreviewState.style;
+ const effect=mercyPreviewState.effect==='random'?mercyPickRandom(mercyTransitionIds,mercyRandomEffect):mercyPreviewState.effect;
+ el.className='mercy-slider-preview-card mercy-preview-demo mercy-card-design mercy-card-'+card;
+ el.innerHTML='<span style="font-size:29px">'+esc(x.icon)+'</span><strong>'+esc(x.title)+'</strong><span>'+esc(x.subtitle)+'</span><small>'+esc(x.metric)+'</small>';
+ el.style.setProperty('--mercy-motion-duration',mercyPreviewState.speed==='slow'?'800ms':mercyPreviewState.speed==='fast'?'250ms':'450ms');
+ void el.offsetWidth;
+ el.classList.add('mercy-effect-'+effect,'mercy-slide-enter-next');
+}
+function mercyCardPreview(){mercyShowUnifiedPreview('card')}
+
 let mercySlideMotion='next';
 function mercyAnimateSlide(effectOverride,speedOverride){
  const carousel=document.querySelector('.mercy-unified-carousel');if(!carousel)return;
@@ -1052,12 +1115,8 @@ function mercyAnimateSlide(effectOverride,speedOverride){
  void panel.offsetWidth;
  panel.classList.add('mercy-effect-'+effect,mercySlideMotion==='prev'?'mercy-slide-enter-prev':'mercy-slide-enter-next');
 }
-function mercyPreviewSliderEffect(){
- const selectedEffect=$('settingSliderEffect')?.value||'slide',effect=selectedEffect==='random'?mercyPickRandom(mercyTransitionIds,mercyRandomEffect):selectedEffect,speed=$('settingSliderSpeed')?.value||'normal';
- const labels=Object.fromEntries([["slide","↔️ Deslizamiento suave"],["stack","🗂️ Tarjetas apiladas"],["cube","🧊 Cubo 3D"],["coverflow","🎞️ Coverflow"],["fade","🌫️ Desvanecimiento"],["zoom","🔎 Zoom dinámico"],["flip","🔄 Volteo 3D"],["vertical","↕️ Deslizamiento vertical"],["spring","🪀 Rebote elástico"]]);
- mercyOpenOverlay('<div class="mercy-dialog mercy-slider-preview-dialog"><h3>🎠 Vista previa</h3><p class="muted">'+esc(labels[effect]||'Deslizamiento')+'</p><div class="mercy-slider-preview-stage"><div class="mercy-slider-preview-card">🛍️<strong>Tienda Mercy</strong><span>Descubre tus productos destacados</span></div></div><div class="actions"><button type="button" class="btn ghost" data-slider-preview-close="1">Cerrar</button><button type="button" class="btn" data-slider-preview-repeat="1">↻ Repetir efecto</button></div></div>');
- mercyAnimateSliderPreview(effect,speed);
-}
+function mercyPreviewSliderEffect(){mercyShowUnifiedPreview('effect')}
+
 function mercyAnimateSliderPreview(effect,speed){
  const panel=document.querySelector('.mercy-slider-preview-card');if(!panel)return;
  const allowed=["slide","stack","cube","coverflow","fade","zoom","flip","vertical","spring"];
@@ -1066,6 +1125,54 @@ function mercyAnimateSliderPreview(effect,speed){
  void panel.offsetWidth;
  panel.classList.add('mercy-effect-'+(allowed.includes(effect)?effect:'slide'),'mercy-slide-enter-next');
 }
+
+let mercyComboboxTarget=null;
+function mercyUpgradeSelects(root){
+ (root||document).querySelectorAll('select:not([data-mercy-combo-ready])').forEach(select=>{
+  if(select.closest('#mercyOverlay'))return;
+  select.dataset.mercyComboReady='1';
+  select.classList.add('mercy-native-select-hidden');
+  const button=document.createElement('button');
+  button.type='button';button.className='mercy-combo-button';button.dataset.mercyComboOpen='1';
+  select.insertAdjacentElement('afterend',button);
+  const update=()=>{const option=select.selectedOptions[0];button.innerHTML='<span>'+esc(option?.textContent?.trim()||'Seleccionar')+'</span><span class="mercy-combo-arrow">⌄</span>';button.disabled=select.disabled;};
+  update();select.addEventListener('change',update);
+ });
+}
+function mercyOpenCombo(select,previewMode){
+ const options=[...select.options].map((o,i)=>({value:o.value,label:o.textContent.trim(),disabled:o.disabled,index:i}));
+ const title=select.id==='settingSliderCardStyle'?'Diseño de tarjeta':select.id==='settingSliderEffect'?'Efecto de transición':select.previousElementSibling?.textContent?.trim()||'Seleccionar opción';
+ mercyComboboxTarget={select,previewMode:!!previewMode,options};
+ mercyOpenOverlay('<div class="mercy-dialog mercy-combo-dialog"><div class="row"><h3>'+esc(title)+'</h3><button type="button" class="small" data-mercy-combo-close="1">✕</button></div>'+(options.length>8?'<input id="mercyComboSearch" class="mercy-combo-search" placeholder="Buscar opción..." autocomplete="off">':'')+'<div class="mercy-combo-list" id="mercyComboList"></div><button type="button" class="btn ghost" data-mercy-combo-close="1">Cancelar</button></div>');
+ mercyFilterCombo('');
+}
+function mercyOpenPreviewCombo(){
+ const isCard=mercyPreviewState.kind==='card';
+ const options=(isCard?mercyCardIds:mercyTransitionIds).map((value,i)=>({value,label:isCard?(i+1)+'. '+mercyCardStyles[i]:({slide:'Deslizamiento',stack:'Stack',cube:'Cubo 3D',coverflow:'Coverflow',fade:'Fade',zoom:'Zoom',flip:'Flip 3D',vertical:'Vertical',spring:'Spring'})[value],disabled:false,index:i}));
+ options.push({value:'random',label:'🎲 Al azar',disabled:false,index:options.length});
+ mercyComboboxTarget={select:null,previewMode:true,options};
+ mercyOpenOverlay('<div class="mercy-dialog mercy-combo-dialog"><div class="row"><h3>Elegir '+(isCard?'diseño':'efecto')+'</h3><button type="button" class="small" data-mercy-combo-close="1">✕</button></div><input id="mercyComboSearch" class="mercy-combo-search" placeholder="Buscar estilo..." autocomplete="off"><div class="mercy-combo-list" id="mercyComboList"></div><button type="button" class="btn ghost" data-mercy-combo-close="1">Volver</button></div>');
+ mercyFilterCombo('');
+}
+function mercyFilterCombo(query){
+ const list=$('mercyComboList'),state=mercyComboboxTarget;if(!list||!state)return;
+ const selected=state.previewMode?(mercyPreviewState.kind==='card'?mercyPreviewState.style:mercyPreviewState.effect):state.select.value;
+ const matches=state.options.filter(o=>o.label.toLowerCase().includes(String(query).toLowerCase()));
+ list.innerHTML=matches.length?matches.map(o=>'<button type="button" class="mercy-combo-option '+(o.value===selected?'active':'')+'" data-mercy-combo-option="'+o.index+'" '+(o.disabled?'disabled':'')+'>'+(state.previewMode&&mercyPreviewState.kind==='card'&&o.value!=='random'?'<span class="mercy-combo-swatch mercy-card-'+esc(o.value)+'" style="background:var(--mercy-card-bg)"></span>':'')+'<span>'+esc(o.label)+'</span><span class="mercy-combo-check">'+(o.value===selected?'✓':'')+'</span></button>').join(''):'<p class="muted">Sin resultados</p>';
+}
+function mercyCloseCombo(){const preview=mercyComboboxTarget?.previewMode;mercyComboboxTarget=null;if(preview)mercyRenderUnifiedPreview();else mercyCloseOverlay();}
+function mercyChooseCombo(index){
+ const state=mercyComboboxTarget;if(!state)return;const option=state.options.find(o=>o.index===index);if(!option||option.disabled)return;
+ if(state.previewMode){
+  if(mercyPreviewState.kind==='card'){mercyPreviewState.style=option.value;const select=$('settingSliderCardStyle');if(select){select.value=option.value;select.dispatchEvent(new Event('change',{bubbles:true}))}}
+  else{mercyPreviewState.effect=option.value;const select=$('settingSliderEffect');if(select){select.value=option.value;select.dispatchEvent(new Event('change',{bubbles:true}))}}
+  mercyComboboxTarget=null;mercyRenderUnifiedPreview();return;
+ }
+ state.select.value=option.value;state.select.dispatchEvent(new Event('change',{bubbles:true}));mercyCloseCombo();
+}
+const mercyComboObserver=new MutationObserver(()=>mercyUpgradeSelects(document));
+mercyComboObserver.observe(document.body,{childList:true,subtree:true});
+mercyUpgradeSelects(document);
 
 let mercySwipeX=null,mercySwipeY=null;
 $('main').addEventListener('touchstart',e=>{if(e.target.closest('.mercy-unified-carousel')){mercySwipeX=e.touches[0].clientX;mercySwipeY=e.touches[0].clientY}else{mercySwipeX=null;mercySwipeY=null}},{passive:true});
