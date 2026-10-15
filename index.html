@@ -456,6 +456,34 @@ header .mercy-header-actions .mercy-icon-btn{background:#ffffffed;color:var(--pi
 #mercyRankingPreviewBody .mercy-rank-showcase:has(>.mercy-rank-winner)>.mercy-rank-winner{grid-row:3}
 #mercyRankingPreviewBody .mercy-rank-showcase:has(>.mercy-rank-winner)>.mercy-rank-followers{grid-row:4;overflow:hidden}
 #mercyRankingPreviewBody .mercy-rank-showcase:has(>.mercy-rank-winner)>.mercy-rank-action{grid-row:5}
+</style><style id="mercy-ranking-real-variants-v1">
+/* Each ranking choice has its own actual preview and production appearance. */
+.mercy-rank-variant-list{display:flex;flex-direction:column;justify-content:center;gap:7px;min-height:0;overflow:hidden}
+.mercy-rank-variant-list .mercy-rank-item{flex:1;min-height:0;padding:8px 10px}
+.mercy-rank-layout-tiles .mercy-rank-variant-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:repeat(2,minmax(0,1fr))}
+.mercy-rank-layout-tiles .mercy-rank-item:first-child{grid-column:1/-1}
+.mercy-rank-layout-tiles .mercy-rank-item{flex-wrap:wrap;align-content:center}
+.mercy-rank-layout-tiles .mercy-rank-item strong{color:var(--pink)}
+.mercy-rank-layout-gradient{background:linear-gradient(125deg,color-mix(in srgb,var(--pink) 26%,white),color-mix(in srgb,var(--pink) 7%,white))!important}
+.mercy-rank-layout-gradient .mercy-rank-item{background:color-mix(in srgb,var(--pink) 17%,white);border:0}
+.mercy-rank-layout-editorial{background:color-mix(in srgb,var(--pink) 5%,#fff8ee)!important;font-family:Georgia,serif}
+.mercy-rank-layout-editorial .mercy-rank-item{border-radius:0;border:0;border-bottom:1px solid var(--pink);background:transparent}
+.mercy-rank-layout-glass{background:linear-gradient(145deg,color-mix(in srgb,var(--pink) 17%,white),#fff9)!important;backdrop-filter:blur(9px)}
+.mercy-rank-layout-glass .mercy-rank-item{background:#ffffff80;box-shadow:0 5px 12px #00000010}
+.mercy-rank-layout-neon{background:color-mix(in srgb,var(--pink) 24%,#0e1624)!important;color:#fff!important}
+.mercy-rank-layout-neon h3,.mercy-rank-layout-neon .mercy-rank-item strong{color:#fff!important}
+.mercy-rank-layout-neon .mercy-rank-item{background:#ffffff0e!important;color:#fff!important;border:1px solid color-mix(in srgb,var(--pink) 65%,#fff)!important;box-shadow:0 0 9px color-mix(in srgb,var(--pink) 36%,transparent)}
+.mercy-rank-layout-neon .mercy-rank-action{background:#ffffff19!important;color:#fff!important;border-color:#ffffff60!important}
+.mercy-rank-layout-minimal .mercy-rank-item{border:0;border-bottom:1px solid color-mix(in srgb,var(--pink) 28%,transparent);border-radius:0;background:transparent}
+.mercy-rank-layout-minimal .mercy-rank-number{font-weight:800;font-size:13px}
+.mercy-rank-layout-ribbon .mercy-rank-item{border-left:6px solid var(--pink);border-radius:5px 14px 14px 5px}
+.mercy-rank-layout-cards .mercy-rank-item{background:white;box-shadow:0 4px 12px #00000012}
+.mercy-rank-layout-podium .mercy-rank-podium{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));align-items:end}
+.mercy-rank-layout-podium .mercy-rank-podium-place{background:color-mix(in srgb,var(--pink) 11%,white)}
+.mercy-rank-layout-spotlight .mercy-rank-spotlight{display:flex;align-items:stretch}
+.mercy-rank-layout-spotlight .mercy-rank-winner{background:color-mix(in srgb,var(--pink) 25%,white)}
+#mercyRankingPreviewBody .mercy-rank-layout-neon{color:#fff!important}
+#mercyRankingPreviewBody .mercy-rank-variant-list{overflow:hidden!important}
 </style></head><body><header><button type="button" class="brand-row mercy-brand-home" data-go="Inicio" aria-label="Ir al inicio de la tienda"><span id="storeLogo" class="brand-logo">🏪</span><span class="brand-copy"><strong id="title">Tienda Mercy</strong><small>Gestión de tienda e inventario</small></span></button><div class="mercy-header-actions"><button type="button" id="mercyGuideButton" class="mercy-icon-btn" aria-label="Iniciar guía interactiva" title="Guía de uso">❔</button><button type="button" id="mercyBellButton" class="mercy-icon-btn" aria-label="Ver notificaciones" title="Notificaciones">🔔<span id="mercyBadge" class="mercy-badge" hidden></span></button></div></header><main id="main"></main><div id="mercyToastStack" class="mercy-toast-stack" role="status" aria-live="polite"></div><div id="quickFabWrap" class="quick-fab-wrap" hidden><div id="quickFabMenu" class="quick-fab-menu" hidden><button type="button" data-action="quickNewProduct">📦 Nuevo producto</button><button type="button" data-action="quickReceive">📥 Recibir mercadería</button></div><button id="quickFab" type="button" data-action="toggleQuickFab" aria-label="Abrir acciones rápidas" aria-expanded="false">+</button></div><button id="posFab" type="button" data-action="openPosCart" aria-label="Ver carrito y finalizar compra"><span class="fab-icon">🛒</span><span class="fab-details">Ver carrito</span></button><button id="up" aria-label="Volver arriba">↑</button><nav id="nav"></nav><div id="mercyOverlay" class="mercy-overlay" hidden></div><div id="mercyTour" class="mercy-tour" hidden></div>
 <script>
 /* Vista web independiente: SOLO DEMO, sin conexión ni escritura en Google Sheets. */
@@ -1217,6 +1245,8 @@ function mercyRankingShowcaseMarkup(items,metric,style,target,heading){
  const champion=top.length?'<button type="button" class="mercy-rank-winner" data-slideproduct="'+esc(String(top[0].p.codigo))+'"><span class="mercy-rank-crown">'+(target==='Sin stock'?'📦':'🏆')+'</span><span class="mercy-rank-winner-info"><small>TOP 1 · PRODUCTO DESTACADO</small><b>'+esc(top[0].p.nombre)+'</b><strong>'+esc(metric(top[0]))+'</strong></span><span>↗</span></button>':'';
  let body='';
  if(!top.length)body='<div class="mercy-rank-empty">✨ No hay productos para este indicador.</div>';
+ else if(chosen==='tiles'||chosen==='cards'||chosen==='minimal'||chosen==='ribbon'||chosen==='editorial'||chosen==='gradient'||chosen==='glass'||chosen==='neon')body='<div class="mercy-rank-variant-list">'+top.slice(0,3).map((r,i)=>row(r,i)).join('')+'</div>';
+ else if(chosen==='podium')body='<div class="mercy-rank-podium">'+[1,0,2].filter(i=>top[i]).map(i=>'<button type="button" class="mercy-rank-podium-place place-'+i+'" data-slideproduct="'+esc(String(top[i].p.codigo))+'"><span>'+(i===0?'🥈':i===1?'🥇':'🥉')+'</span><small>'+esc(top[i].p.nombre)+'</small><strong>'+esc(metric(top[i]))+'</strong><b>'+(i+1)+'</b></button>').join('')+'</div>';
  else if(chosen==='visual-podium')body='<div class="mercy-rank-podium">'+[1,0,2].filter(i=>top[i]).map(i=>'<button type="button" class="mercy-rank-podium-place place-'+i+'" data-slideproduct="'+esc(String(top[i].p.codigo))+'"><span>'+(i===0?'🥇':i===1?'🥈':'🥉')+'</span><small>'+esc(top[i].p.nombre)+'</small><strong>'+esc(metric(top[i]))+'</strong><b>'+(i+1)+'</b></button>').join('')+'</div>';
  else if(chosen==='performance'||chosen==='bars')body='<div class="mercy-rank-bars">'+top.slice(0,3).map((r,i)=>'<button type="button" class="mercy-rank-bar" data-slideproduct="'+esc(String(r.p.codigo))+'"><span>'+esc(r.p.nombre)+'</span><strong>'+esc(metric(r))+'</strong><i><em style="width:'+Math.max(10,100-i*28)+'%"></em></i></button>').join('')+'</div>';
  else if(chosen==='bento-pro'||chosen==='bento')body='<div class="mercy-rank-bento">'+top.slice(0,3).map((r,i)=>'<button type="button" class="mercy-rank-bento-cell '+(i===0?'featured':'')+'" data-slideproduct="'+esc(String(r.p.codigo))+'"><small>TOP '+(i+1)+'</small><b>'+esc(r.p.nombre)+'</b><strong>'+esc(metric(r))+'</strong></button>').join('')+'</div>';
