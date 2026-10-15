@@ -386,7 +386,7 @@ function mercySectionDraft(section){
 }
 function mercyCommitSection(section){
  const next=mercySectionDraft(section);if(!next)return;
- appearance=next;localStorage.setItem('mercy_appearance_v1',JSON.stringify(appearance));applyAppearance();render();mercyToast(section==='all'?'Todos los ajustes guardados':'Sección guardada correctamente');
+ appearance=next;localStorage.setItem('mercy_appearance_v1',JSON.stringify(appearance));applyAppearance();message='';isError=false;render();mercyToast(section==='all'?'Personalización guardada':'Sección guardada correctamente');
 }
 function mercyPreviewSection(section){
  const draft=mercySectionDraft(section);if(!draft)return;
@@ -406,7 +406,7 @@ function mercyPreviewAlertSettings(){
  mercyAlertSettings={...mercyAlertSettings,style:mercyAlertSettings.style,position:$('alertPosition')?.value||mercyAlertSettings.position,duration:Math.max(2,Math.min(20,Number($('alertDuration')?.value)||7))};
  mercyToast('Así se verán tus notificaciones',false,true);
 }
-function alertMessage(s,error=false){message=s;isError=error;render();mercyToast(s,error)}
+function alertMessage(s,error=false){message='';isError=false;render();mercyToast(s,error)}
 function arrayFrom(response){let d=response.data;if(Array.isArray(d))return d;if(d&&Array.isArray(d.productos))return d.productos;if(d&&Array.isArray(d.ventas))return d.ventas;if(d&&Array.isArray(d.categorias))return d.categorias;return []}
 function iconForProduct(p){
  if(!p)return '📦';
