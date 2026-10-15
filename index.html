@@ -333,6 +333,45 @@ header .mercy-header-actions .mercy-icon-btn{background:#ffffffed;color:var(--pi
 .mercy-ranking-cards .mercy-ranking-entry{box-shadow:0 4px 12px #0002}
 #mercyRankingPreviewBody .mercy-ranking-layout{min-height:250px}
 #mercyRankingPreviewBody .mercy-ranking-entry{font-size:13px}
+</style><style id="mercy-brand-consistent-cards-v1">
+/* All carousel cards inherit the current store primary color; layout variants remain distinct. */
+.mercy-unified-carousel .mercy-card-design,.mercy-slider-preview-card.mercy-card-design{
+ --mercy-card-bg:color-mix(in srgb,var(--pink) 13%,white)!important;
+ --mercy-card-accent:color-mix(in srgb,var(--pink) 32%,white)!important;
+ --mercy-card-fg:color-mix(in srgb,var(--pink) 63%,#16232d)!important;
+ color:var(--mercy-card-fg)!important;
+ background:linear-gradient(125deg,var(--mercy-card-bg),color-mix(in srgb,var(--mercy-card-accent) 35%,white))!important;
+ border-color:color-mix(in srgb,var(--pink) 30%,transparent)!important;
+}
+.mercy-unified-carousel .mercy-card-design .mercy-slide-product,.mercy-unified-carousel .mercy-card-design .mercy-ranking-entry{
+ color:inherit!important;
+ background:color-mix(in srgb,var(--pink) 9%,white)!important;
+ border-color:color-mix(in srgb,var(--pink) 20%,transparent)!important;
+}
+.mercy-unified-carousel .mercy-ranking-layout,.mercy-unified-carousel .mercy-ranking-gradient,.mercy-unified-carousel .mercy-ranking-editorial,.mercy-unified-carousel .mercy-ranking-glass,.mercy-unified-carousel .mercy-ranking-neon,.mercy-slider-preview-stage .mercy-ranking-layout{
+ background:transparent!important;color:inherit!important;border-color:var(--pink)!important;
+}
+.mercy-unified-carousel .mercy-ranking-number,.mercy-unified-carousel .mercy-ranking-report-link{
+ background:color-mix(in srgb,var(--pink) 18%,white)!important;
+ color:color-mix(in srgb,var(--pink) 65%,#182a35)!important;
+}
+.mercy-unified-carousel .mercy-ranking-report-link{border:1px solid color-mix(in srgb,var(--pink) 30%,transparent)!important}
+.mercy-unified-carousel .mercy-ranking-podium .mercy-ranking-entry:first-child,.mercy-unified-carousel .mercy-ranking-spotlight .mercy-ranking-entry:first-child{
+ background:color-mix(in srgb,var(--pink) 22%,white)!important;
+ border-color:var(--pink)!important;color:inherit!important;
+}
+.mercy-unified-carousel .mercy-ranking-bars .mercy-ranking-entry,.mercy-unified-carousel .mercy-ranking-ribbon .mercy-ranking-entry{
+ border-left-color:var(--pink)!important;
+}
+.mercy-unified-carousel .mercy-card-style11{border-color:var(--pink)!important;box-shadow:5px 5px 0 color-mix(in srgb,var(--pink) 45%,white)!important}
+.mercy-unified-carousel .mercy-card-style18{box-shadow:0 0 14px color-mix(in srgb,var(--pink) 24%,transparent)!important}
+.mercy-unified-carousel .mercy-card-style12,.mercy-unified-carousel .mercy-card-style33{background:radial-gradient(circle at 85% 0%,var(--mercy-card-accent),var(--mercy-card-bg) 72%)!important}
+.mercy-unified-carousel .mercy-card-style8,.mercy-unified-carousel .mercy-card-style15,.mercy-unified-carousel .mercy-card-style26,.mercy-unified-carousel .mercy-card-style32{background:repeating-linear-gradient(125deg,var(--mercy-card-bg) 0 60%,var(--mercy-card-accent) 60% 100%)!important}
+.mercy-unified-carousel .mercy-card-design .mercy-slide-top,.mercy-unified-carousel .mercy-card-design .mercy-hero-slide{color:inherit!important}
+.mercy-slider-preview-card.mercy-card-design{background:linear-gradient(125deg,var(--mercy-card-bg),var(--mercy-card-accent))!important}
+#mercyRankingPreviewBody .mercy-ranking-layout{background:color-mix(in srgb,var(--pink) 12%,white)!important;color:color-mix(in srgb,var(--pink) 64%,#182a35)!important}
+#mercyRankingPreviewBody .mercy-ranking-entry{background:color-mix(in srgb,var(--pink) 8%,white)!important;border-color:color-mix(in srgb,var(--pink) 25%,transparent)!important}
+#mercyRankingPreviewBody .mercy-ranking-report-link{background:color-mix(in srgb,var(--pink) 18%,white)!important;color:color-mix(in srgb,var(--pink) 68%,#182a35)!important}
 </style></head><body><header><button type="button" class="brand-row mercy-brand-home" data-go="Inicio" aria-label="Ir al inicio de la tienda"><span id="storeLogo" class="brand-logo">🏪</span><span class="brand-copy"><strong id="title">Tienda Mercy</strong><small>Gestión de tienda e inventario</small></span></button><div class="mercy-header-actions"><button type="button" id="mercyGuideButton" class="mercy-icon-btn" aria-label="Iniciar guía interactiva" title="Guía de uso">❔</button><button type="button" id="mercyBellButton" class="mercy-icon-btn" aria-label="Ver notificaciones" title="Notificaciones">🔔<span id="mercyBadge" class="mercy-badge" hidden></span></button></div></header><main id="main"></main><div id="mercyToastStack" class="mercy-toast-stack" role="status" aria-live="polite"></div><div id="quickFabWrap" class="quick-fab-wrap" hidden><div id="quickFabMenu" class="quick-fab-menu" hidden><button type="button" data-action="quickNewProduct">📦 Nuevo producto</button><button type="button" data-action="quickReceive">📥 Recibir mercadería</button></div><button id="quickFab" type="button" data-action="toggleQuickFab" aria-label="Abrir acciones rápidas" aria-expanded="false">+</button></div><button id="posFab" type="button" data-action="openPosCart" aria-label="Ver carrito y finalizar compra"><span class="fab-icon">🛒</span><span class="fab-details">Ver carrito</span></button><button id="up" aria-label="Volver arriba">↑</button><nav id="nav"></nav><div id="mercyOverlay" class="mercy-overlay" hidden></div><div id="mercyTour" class="mercy-tour" hidden></div>
 <script>
 /* Vista web independiente: SOLO DEMO, sin conexión ni escritura en Google Sheets. */
