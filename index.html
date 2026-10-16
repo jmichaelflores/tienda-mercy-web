@@ -664,6 +664,26 @@ input,textarea,select{scroll-margin-top:65px;scroll-margin-bottom:85px}
  body.mercy-pc-compact main .grid{grid-template-columns:repeat(auto-fit,minmax(155px,1fr))}
  body.mercy-pc-catalog main .grid{grid-template-columns:repeat(auto-fit,minmax(205px,1fr))}
 }
+</style><style id="mercy-pc-screen-fixes">
+@media(min-width:768px){
+ /* Un unico eje de alineacion para TODAS las pantallas. */
+ body[class*="mercy-pc-"] #main{--mercy-content-max:var(--mercy-page-width,1120px)}
+ body[class*="mercy-pc-"] #main>:not(.pos-layout):not(.mercy-alert-banner):not(.notice):not(.mercy-floating-settings){box-sizing:border-box;max-width:var(--mercy-content-max);margin-left:auto;margin-right:auto}
+ body[class*="mercy-pc-"] #main>.field,body[class*="mercy-pc-"] #main>input,body[class*="mercy-pc-"] #main>select{display:block;width:100%}
+ body[class*="mercy-pc-"] #main>.chips,body[class*="mercy-pc-"] #main>.pos-cats{width:100%;display:flex;flex-wrap:wrap;justify-content:flex-start}
+ body[class*="mercy-pc-"] #main>.product-summary,body[class*="mercy-pc-"] #main>.muted{width:100%}
+ body[class*="mercy-pc-"] #main>.grid{width:100%;grid-template-columns:repeat(auto-fit,minmax(min(100%,195px),1fr))}
+ body[class*="mercy-pc-"] #main>.product-list{width:100%;grid-template-columns:repeat(auto-fill,minmax(min(100%,295px),1fr))}
+ body[class*="mercy-pc-"] #main>.pagination{width:100%;display:flex;justify-content:space-between;align-items:center}
+ body[class*="mercy-pc-"] #main>.card{width:100%}
+ body[class*="mercy-pc-"] #main>.mercy-setting-section{width:100%}
+ body[class*="mercy-pc-"] #main>.row{width:100%}
+ body[class*="mercy-pc-"] #main>.product-list .product-card{max-width:none}
+ body[class*="mercy-pc-"] #main .inventory-product-row{gap:12px}
+ body[class*="mercy-pc-"] #main .inventory-product-identity{min-width:0;flex:1}
+ body[class*="mercy-pc-"] #main .inventory-product-stock{flex-shrink:0}
+ #nav button:focus-visible{outline:2px solid var(--pink);outline-offset:2px}
+}
 </style></head><body><header><button type="button" class="brand-row mercy-brand-home" data-go="Inicio" aria-label="Ir al inicio de la tienda"><span id="storeLogo" class="brand-logo">🏪</span><span class="brand-copy"><strong id="title">Tienda Mercy</strong><small>Gestión de tienda e inventario</small></span></button><div class="mercy-header-actions"><button type="button" id="mercyGuideButton" class="mercy-icon-btn" aria-label="Iniciar guía interactiva" title="Guía de uso">❔</button><button type="button" id="mercyBellButton" class="mercy-icon-btn" aria-label="Ver notificaciones" title="Notificaciones">🔔<span id="mercyBadge" class="mercy-badge" hidden></span></button></div></header><main id="main"></main><div id="mercyToastStack" class="mercy-toast-stack" role="status" aria-live="polite"></div><div id="quickFabWrap" class="quick-fab-wrap" hidden><div id="quickFabMenu" class="quick-fab-menu" hidden><button type="button" data-action="quickNewProduct">📦 Nuevo producto</button><button type="button" data-action="quickReceive">📥 Recibir mercadería</button></div><button id="quickFab" type="button" data-action="toggleQuickFab" aria-label="Abrir acciones rápidas" aria-expanded="false">+</button></div><button id="posFab" type="button" data-action="openPosCart" aria-label="Ver carrito y finalizar compra"><span class="fab-icon">🛒</span><span class="fab-details">Ver carrito</span></button><button id="up" aria-label="Volver arriba">↑</button><nav id="nav"></nav><div id="mercyOverlay" class="mercy-overlay" hidden></div><div id="mercyTour" class="mercy-tour" hidden></div>
 <script>
 /* Conector web de produccion: mismo contrato de API que la APK. */
@@ -712,7 +732,7 @@ let categoryApiUnavailable=false;let inventoryFilter='Todos',inventoryQuery='',i
 let accounts={clientes:[],ventas:[],abonos:[],totalFiado:0,totalCobrado:0,totalPendiente:0},accountsError='',fiadoCliente='',fiadoClientKey='',fiadoTicketId='',fiadoSearch='',fiadoAbonoMonto='',fiadoAbonoMetodo='Efectivo',fiadoAbonoRequestId='',fiadoRequestId='';
 function fiadoClave(s){return String(s||'').trim().replace(/\s+/g,' ').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'')}
 function fiadoHintText(){let name=fiadoClave(fiadoCliente);if(!name)return 'Escribe el nombre o elige un cliente que ya compró fiado.';let c=(accounts.clientes||[]).find(x=>x.clave===name);if(c)return 'Cliente registrado: '+c.ventas.length+' compra(s) fiadas · saldo actual '+money(c.saldo);let candidates=(accounts.clientes||[]).filter(x=>fiadoClave(x.nombre).includes(name));return candidates.length?'Cliente anterior: '+candidates.slice(0,3).map(x=>x.nombre).join(', '):'Cliente nuevo: se abrirá una cuenta por cobrar.'}
-function mercyAllSales(){return [...sales,...(accounts.ventas||[])].sort((a,b)=>String(b.fecha||'').localeCompare(String(a.fecha||'')))}
+function mercyAllSales(){const direct=Array.isArray(sales)?sales:[];const credit=Array.isArray(accounts?.ventas)?accounts.ventas:[];return [...direct,...credit].filter(v=>v&&typeof v==='object').sort((a,b)=>String(b.fecha||'').localeCompare(String(a.fecha||'')))}
 function mercyNewId(){return String(Date.now())+'-'+Math.random().toString(36).slice(2)+'-'+Math.random().toString(36).slice(2)}
 function currentReceiveCost(){const p=products.find(x=>x.codigo===receiveCode);return receiveCostCode===receiveCode?String(receiveCost):(p&&p.costo!==undefined&&p.costo!==null?String(p.costo):'')}
 async function refreshFinancials(){let r=await api('costosVentas');if(r.ok){financeData=r.data||r;financeError=''}else{financeData=null;financeError=r.error||'No se pudieron consultar los costos de ventas'}render()}
@@ -1195,7 +1215,7 @@ document.getElementById('nav')?.addEventListener('click',e=>{
  if(!button||!e.currentTarget.contains(button))return;
  e.preventDefault();e.stopPropagation();
  const destination=button.dataset.go;
- if(destination){go(destination);}
+ if(destination){try{go(destination)}catch(err){console.error('Error al abrir '+destination,err);screen=destination;const main=document.getElementById('main');if(main)main.innerHTML='<section class="card"><h3>No se pudo mostrar '+destination+'</h3><p class="muted">Se produjo un error al cargar esta pantalla. Intenta actualizar.</p><button class="btn" data-go="Inicio">Volver al inicio</button></section>';}}
 });
 document.addEventListener('click',async e=>{
 let t=e.target.closest('button');if(!t)return;
