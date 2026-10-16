@@ -1362,6 +1362,22 @@ let mercyGunBuffer='',mercyGunFirst=0,mercyGunLast=0,mercyGunTarget=null;
 function mercyGunProcess(code){
  code=String(code||'').trim();if(!code)return;
  const product=products.find(p=>String(p.codigo||'').trim()===code);
+ // Productos e Inventario: buscar en la pantalla actual, sin iniciar venta.
+ if(screen==='Productos'||screen==='Inventario'){
+  if(product){
+   if(screen==='Productos'){query=code;filter='Todas';page=0}
+   else{inventoryQuery=code;inventoryFilter='Todos';inventoryPage=0}
+   render();
+   alertMessage('Producto encontrado: '+product.nombre);
+  }else{
+   productIndex=-1;draft={codigo:code,stockInicial:''};
+   cartProductReturn=false;
+   go('Formulario producto');
+   alertMessage('Código '+code+' no encontrado. Registra un producto nuevo.');
+  }
+  return;
+ }
+ // En otras pantallas se mantiene la venta rápida por pistola.
  if(screen!=='Vender')go('Vender');
  posCheckout=false;posSuccess=null;
  if(product){
