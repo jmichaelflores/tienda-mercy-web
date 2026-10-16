@@ -684,6 +684,18 @@ input,textarea,select{scroll-margin-top:65px;scroll-margin-bottom:85px}
  body[class*="mercy-pc-"] #main .inventory-product-stock{flex-shrink:0}
  #nav button:focus-visible{outline:2px solid var(--pink);outline-offset:2px}
 }
+</style><style id="mercy-pc-carousel-visibility-fix">
+@media(min-width:768px){
+ /* El carrusel debe conservar altura y ancho propios dentro de cada estilo PC. */
+ body[class*="mercy-pc-"] #main>.mercy-unified-carousel{display:block!important;visibility:visible!important;opacity:1!important;width:100%;max-width:var(--mercy-page-width,1120px);min-width:0;margin:0 auto 20px;overflow:visible}
+ body[class*="mercy-pc-"] #main>.mercy-unified-carousel>.mercy-card-design{display:block!important;visibility:visible!important;opacity:1!important;width:100%;min-height:var(--mercy-slider-height,245px);height:auto;box-sizing:border-box}
+ body[class*="mercy-pc-"] #main>.mercy-unified-carousel .mercy-hero-slide,
+ body[class*="mercy-pc-"] #main>.mercy-unified-carousel .mercy-home-slider{display:flex!important;visibility:visible!important;opacity:1!important;box-sizing:border-box;width:100%;height:var(--mercy-slider-height,245px);min-height:var(--mercy-slider-height,245px);max-height:none}
+ body[class*="mercy-pc-"] #main>.mercy-unified-carousel .mercy-hero-slide{flex-direction:column;justify-content:center;overflow:auto}
+ body[class*="mercy-pc-"] #main>.mercy-unified-carousel .mercy-home-slider{flex-direction:column}
+ body[class*="mercy-pc-"] #main>.mercy-unified-carousel .mercy-slide-pager{display:flex!important;visibility:visible!important;justify-content:center;min-height:20px}
+ body.mercy-pc-studio #main>.mercy-unified-carousel .mercy-card-design{color:var(--mercy-card-fg,#fff)}
+}
 </style></head><body><header><button type="button" class="brand-row mercy-brand-home" data-go="Inicio" aria-label="Ir al inicio de la tienda"><span id="storeLogo" class="brand-logo">🏪</span><span class="brand-copy"><strong id="title">Tienda Mercy</strong><small>Gestión de tienda e inventario</small></span></button><div class="mercy-header-actions"><button type="button" id="mercyGuideButton" class="mercy-icon-btn" aria-label="Iniciar guía interactiva" title="Guía de uso">❔</button><button type="button" id="mercyBellButton" class="mercy-icon-btn" aria-label="Ver notificaciones" title="Notificaciones">🔔<span id="mercyBadge" class="mercy-badge" hidden></span></button></div></header><main id="main"></main><div id="mercyToastStack" class="mercy-toast-stack" role="status" aria-live="polite"></div><div id="quickFabWrap" class="quick-fab-wrap" hidden><div id="quickFabMenu" class="quick-fab-menu" hidden><button type="button" data-action="quickNewProduct">📦 Nuevo producto</button><button type="button" data-action="quickReceive">📥 Recibir mercadería</button></div><button id="quickFab" type="button" data-action="toggleQuickFab" aria-label="Abrir acciones rápidas" aria-expanded="false">+</button></div><button id="posFab" type="button" data-action="openPosCart" aria-label="Ver carrito y finalizar compra"><span class="fab-icon">🛒</span><span class="fab-details">Ver carrito</span></button><button id="up" aria-label="Volver arriba">↑</button><nav id="nav"></nav><div id="mercyOverlay" class="mercy-overlay" hidden></div><div id="mercyTour" class="mercy-tour" hidden></div>
 <script>
 /* Conector web de produccion: mismo contrato de API que la APK. */
