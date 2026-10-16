@@ -744,6 +744,27 @@ input,textarea,select{scroll-margin-top:65px;scroll-margin-bottom:85px}
 @media(min-width:768px) and (max-width:1100px){
  body[class*="mercy-pc-"] #main>.mercy-unified-carousel{max-width:100%!important}
 }
+</style><style id="mercy-carousel-rankings-and-alerts-pc">
+@media(min-width:768px){
+/* Los rankings requieren espacio suficiente, especialmente con tarjetas tipo bento. */
+body[class*="mercy-pc-"] #main>.mercy-unified-carousel>.mercy-card-design{height:clamp(310px,31vw,390px)!important;min-height:310px!important}
+body[class*="mercy-pc-"] #main>.mercy-unified-carousel .mercy-home-slider{height:100%!important;min-height:0!important;overflow:auto!important}
+body[class*="mercy-pc-"] #main>.mercy-unified-carousel .mercy-rank-showcase{height:100%!important;min-height:0!important;overflow:auto!important;padding:18px 22px!important}
+body[class*="mercy-pc-"] #main>.mercy-unified-carousel .mercy-rank-showcase .mercy-rank-item{min-height:36px}
+body[class*="mercy-pc-"] #main>.mercy-unified-carousel .mercy-slide-pager{margin:12px 0 20px!important}
+#mercyOverlay:not([hidden]){display:flex;align-items:stretch;justify-content:flex-end;padding:0;background:#10172580;backdrop-filter:blur(3px)}
+#mercyOverlay>.mercy-panel{width:min(480px,100%);max-width:none;height:100dvh;max-height:100dvh;border-radius:20px 0 0 20px;box-shadow:-16px 0 45px #151a2b24;overflow-y:auto;box-sizing:border-box;padding:26px 22px;background:var(--bg,#fff)}
+#mercyOverlay>.mercy-panel>.row:first-child{position:sticky;top:-26px;z-index:2;background:inherit;padding:8px 0 15px;align-items:center;border-bottom:1px solid var(--line);margin-bottom:16px}
+#mercyOverlay>.mercy-panel>.row:first-child h3{margin:0;font-size:21px}
+#mercyOverlay>.mercy-panel>.item{display:flex;align-items:center;gap:12px;padding:14px;border:1px solid var(--line);border-radius:14px;margin:9px 0;background:color-mix(in srgb,var(--pink) 3%,white)}
+#mercyOverlay>.mercy-panel>.item .mercy-alert-text{flex:1;min-width:0;overflow-wrap:anywhere}
+#mercyOverlay>.mercy-panel>.item button{flex-shrink:0}
+#mercyOverlay>.mercy-panel>.mercy-alert-actions{position:sticky;bottom:-26px;background:inherit;padding:14px 0;display:flex;gap:10px}
+#mercyOverlay>.mercy-panel>.mercy-alert-actions .btn{flex:1}
+}
+@media(min-width:768px) and (max-width:1023px){
+#mercyOverlay>.mercy-panel{width:min(420px,calc(100vw - 190px));padding:20px 16px}
+}
 </style></head><body><header><button type="button" class="brand-row mercy-brand-home" data-go="Inicio" aria-label="Ir al inicio de la tienda"><span id="storeLogo" class="brand-logo">🏪</span><span class="brand-copy"><strong id="title">Tienda Mercy</strong><small>Gestión de tienda e inventario</small></span></button><div class="mercy-header-actions"><button type="button" id="mercyGuideButton" class="mercy-icon-btn" aria-label="Iniciar guía interactiva" title="Guía de uso">❔</button><button type="button" id="mercyBellButton" class="mercy-icon-btn" aria-label="Ver notificaciones" title="Notificaciones">🔔<span id="mercyBadge" class="mercy-badge" hidden></span></button></div></header><main id="main"></main><div id="mercyToastStack" class="mercy-toast-stack" role="status" aria-live="polite"></div><div id="quickFabWrap" class="quick-fab-wrap" hidden><div id="quickFabMenu" class="quick-fab-menu" hidden><button type="button" data-action="quickNewProduct">📦 Nuevo producto</button><button type="button" data-action="quickReceive">📥 Recibir mercadería</button></div><button id="quickFab" type="button" data-action="toggleQuickFab" aria-label="Abrir acciones rápidas" aria-expanded="false">+</button></div><button id="posFab" type="button" data-action="openPosCart" aria-label="Ver carrito y finalizar compra"><span class="fab-icon">🛒</span><span class="fab-details">Ver carrito</span></button><button id="up" aria-label="Volver arriba">↑</button><nav id="nav"></nav><div id="mercyOverlay" class="mercy-overlay" hidden></div><div id="mercyTour" class="mercy-tour" hidden></div>
 <script>
 /* Conector web de produccion: mismo contrato de API que la APK. */
@@ -1036,7 +1057,7 @@ const noStock=list.filter(r=>Number(r.p.existencia||0)<=0).sort((a,b)=>String(a.
 const slides=[{name:'🔥 Más vendidos',items:best,n:best.length,metric:r=>r.units+' uds.',target:'Más vendidos'},{name:'💰 Mayor ganancia',items:gains,n:gains.length,metric:r=>money(r.profit),target:'Mayor ganancia'},{name:'📦 Sin ventas registradas',items:none,n:none.length,metric:r=>'Sin ventas',target:'Sin ventas'},{name:'🚫 Productos sin stock',items:noStock,n:noStock.length,metric:r=>'0 uds.',target:'Sin stock'}];
 const enabledSlides=slides.filter((s,i)=>[appearance.sliderBest,appearance.sliderProfit,appearance.sliderNoSales,appearance.sliderNoStock][i]!==false);
 const heroSlides=(Array.isArray(appearance.heroContent)?appearance.heroContent:[]).filter(Boolean).map((item,i)=>{const showIcon=appearance.heroShowIcons?.[i]!==false;const clean=text=>showIcon?text:text.replace(/[\u{1F000}-\u{1FAFF}\u{2600}-\u{27BF}\uFE0F\u200D]/gu,'').replace(/\\s{2,}/g,' ').trim();return {title:clean(String(item.title||'').replaceAll('{tienda}',appearance.storeName).replaceAll('{icono}',showIcon?appearance.storeIcon:'')),subtitle:clean(String(item.subtitle||'').replaceAll('{tienda}',appearance.storeName).replaceAll('{icono}',showIcon?appearance.storeIcon:''))}});
-const unifiedSlides=[...heroSlides.filter((x,i)=>[appearance.sliderWelcome,appearance.sliderOrganized,appearance.sliderInsights][i]!==false).map(x=>({kind:'welcome',...x,tone:heroSlides.indexOf(x)})),...(appearance.sliderEnabled===false?[]:enabledSlides.map(x=>({kind:'ranking',...x})))];
+const welcomeSlides=heroSlides.filter((x,i)=>[appearance.sliderWelcome,appearance.sliderOrganized,appearance.sliderInsights][i]!==false).map(x=>({kind:'welcome',...x,tone:heroSlides.indexOf(x)}));const rankingSlides=appearance.sliderEnabled===false?[]:enabledSlides.map(x=>({kind:'ranking',...x}));const unifiedSlides=window.matchMedia('(min-width:768px)').matches?[...rankingSlides,...welcomeSlides]:[...welcomeSlides,...rankingSlides];
 const ix=unifiedSlides.length?((mercySlideIndex%unifiedSlides.length)+unifiedSlides.length)%unifiedSlides.length:0,slide=unifiedSlides[ix];
 if(unifiedSlides.length>1&&appearance.sliderAutoPlay!==false){const interval=Math.max(2,Math.min(60,Number(appearance.sliderInterval)||5))*1000;mercyCarouselTimer=setInterval(()=>{if(screen==='Inicio'&&!document.hidden){mercySlideMotion='next';mercySlideIndex=(mercySlideIndex+1)%unifiedSlides.length;mercyNextCarouselChoices();render();mercyAnimateSlide()}},interval)}
 if(unifiedSlides.length)h+='<div class="mercy-unified-carousel" data-swipe-slider="1"><div class="mercy-card-design mercy-card-'+mercyCurrentCardStyle()+'">'+(slide.kind==='welcome'?'<div class="mercy-hero-slide mercury-hero-tone-'+slide.tone+'"><b>'+esc(slide.title)+'</b><div>'+esc(slide.subtitle)+'</div></div>':'<div class="mercy-home-slider">'+mercyRankingShowcaseMarkup(slide.items,slide.metric,mercyRankingStyle(),slide.target,slide.name)+'</div>')+'</div><div class="mercy-slide-pager">'+unifiedSlides.map((x,i)=>'<button type="button" data-slideindex="'+i+'" class="'+(i===ix?'active':'')+'" aria-label="'+esc(x.kind==='welcome'?x.title:x.name)+'"><span class="mercy-slide-dot" aria-hidden="true"></span></button>').join('')+'</div></div>';
