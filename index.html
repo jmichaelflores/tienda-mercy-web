@@ -1356,6 +1356,53 @@ function mercyUsbAddCode(){
  render();
  if(window.matchMedia('(min-width:768px)').matches)requestAnimationFrame(()=>document.getElementById('mercyUsbCode')?.focus({preventScroll:true}));
 }
+// Lector de pistola global (modo teclado): funciona desde cualquier pantalla de PC.
+// Detecta rafagas rapidas terminadas en Enter; no interpreta escritura humana normal.
+let mercyGunBuffer='',mercyGunFirst=0,mercyGunLast=0,mercyGunTarget=null;
+function mercyGunProcess(code){
+ code=String(code||'').trim();if(!code)return;
+ const product=products.find(p=>String(p.codigo||'').trim()===code);
+ if(screen!=='Vender')go('Vender');
+ posCheckout=false;posSuccess=null;
+ if(product){
+  const current=Number(cart[product.codigo]||0);
+  if(Number(product.existencia||0)<=current){alertMessage('Sin existencias disponibles para '+product.nombre,true);return}
+  cart[product.codigo]=current+1;
+  saleRequestId='';fiadoRequestId='';
+  render();
+  alertMessage('Producto agregado a la venta: '+product.nombre);
+ }else{
+  productIndex=-1;draft={codigo:code,stockInicial:''};
+  cartProductReturn=true;cartNewQty=1;
+  go('Formulario producto');
+  alertMessage('Código '+code+' no registrado. Registra el producto; la venta actual se conserva.');
+ }
+}
+document.addEventListener('keydown',e=>{
+ if(!window.matchMedia('(min-width:768px)').matches||e.ctrlKey||e.altKey||e.metaKey||e.isComposing)return;
+ if(document.getElementById('mercyDesktopScanner')||document.getElementById('mercyInlineScan'))return;
+ const now=performance.now();
+ if(e.key==='Enter'){
+  const code=mercyGunBuffer;
+  const elapsed=now-mercyGunFirst;
+  const target=mercyGunTarget;
+  mercyGunBuffer='';mercyGunFirst=0;mercyGunLast=0;mercyGunTarget=null;
+  // >= 6 caracteres y velocidad propia de lector de barras.
+  if(code.length>=6&&elapsed<=Math.max(400,code.length*75)&&elapsed/code.length<75){
+   e.preventDefault();e.stopImmediatePropagation();
+   // El lector puede escribir en un input que tenga el foco; retiramos solo el sufijo escaneado.
+   if(target&&('value' in target)&&target.isConnected&&typeof target.value==='string'&&target.value.endsWith(code)){
+    target.value=target.value.slice(0,-code.length);
+    target.dispatchEvent(new Event('input',{bubbles:true}));
+   }
+   mercyGunProcess(code);
+  }
+  return;
+ }
+ if(e.key.length!==1||!/[a-zA-Z0-9]/.test(e.key)){mercyGunBuffer='';mercyGunLast=0;return}
+ if(!mercyGunLast||now-mercyGunLast>95){mercyGunBuffer='';mercyGunFirst=now;mercyGunTarget=e.target}
+ mercyGunBuffer+=e.key;mercyGunLast=now;
+},true);
 document.addEventListener('keydown',e=>{
  if(e.key==='Enter'&&e.target?.id==='mercyUsbCode'){
   e.preventDefault();e.stopPropagation();mercyUsbAddCode();
