@@ -787,6 +787,21 @@ body[class*="mercy-pc-"] #main>.mercy-unified-carousel .mercy-slide-pager{margin
  .mercy-desktop-merch-action{justify-content:flex-end;margin-bottom:16px}
 }
 @media(max-width:767px){.mercy-desktop-only-action{display:none!important}.mercy-desktop-merch-action{display:none!important}}
+</style><style id="mercy-pc-sell-nav-consistent">
+@media(min-width:768px){
+ /* Vender usa el mismo icono, alineacion y estado activo que el resto del menu PC. */
+ #nav button.sell-tab{overflow:hidden!important;position:relative!important}
+ #nav button.sell-tab b,
+ #nav button.sell-tab.active b{
+  width:auto!important;height:auto!important;min-width:0!important;min-height:0!important;
+  border:0!important;border-radius:0!important;margin:0!important;padding:0!important;
+  background:transparent!important;color:inherit!important;box-shadow:none!important;
+  font-size:inherit!important;font-weight:inherit!important;
+  display:inline-flex!important;align-items:center!important;justify-content:center!important;
+ }
+ #nav button.sell-tab span{font-size:inherit!important;color:inherit!important;font-weight:inherit!important}
+ #nav button.sell-tab .mercy-nav-cart-badge{position:static!important;display:inline-flex!important;min-width:18px;height:18px;padding:0 4px;margin-left:auto;font-size:10px;flex-shrink:0}
+}
 </style></head><body><header><button type="button" class="brand-row mercy-brand-home" data-go="Inicio" aria-label="Ir al inicio de la tienda"><span id="storeLogo" class="brand-logo">🏪</span><span class="brand-copy"><strong id="title">Tienda Mercy</strong><small>Gestión de tienda e inventario</small></span></button><div class="mercy-header-actions"><button type="button" id="mercyGuideButton" class="mercy-icon-btn" aria-label="Iniciar guía interactiva" title="Guía de uso">❔</button><button type="button" id="mercyBellButton" class="mercy-icon-btn" aria-label="Ver notificaciones" title="Notificaciones">🔔<span id="mercyBadge" class="mercy-badge" hidden></span></button></div></header><main id="main"></main><div id="mercyToastStack" class="mercy-toast-stack" role="status" aria-live="polite"></div><div id="quickFabWrap" class="quick-fab-wrap" hidden><div id="quickFabMenu" class="quick-fab-menu" hidden><button type="button" data-action="quickNewProduct">📦 Nuevo producto</button><button type="button" data-action="quickReceive">📥 Recibir mercadería</button></div><button id="quickFab" type="button" data-action="toggleQuickFab" aria-label="Abrir acciones rápidas" aria-expanded="false">+</button></div><button id="posFab" type="button" data-action="openPosCart" aria-label="Ver carrito y finalizar compra"><span class="fab-icon">🛒</span><span class="fab-details">Ver carrito</span></button><button id="up" aria-label="Volver arriba">↑</button><nav id="nav"></nav><div id="mercyOverlay" class="mercy-overlay" hidden></div><div id="mercyTour" class="mercy-tour" hidden></div>
 <script>
 /* Conector web de produccion: mismo contrato de API que la APK. */
