@@ -546,6 +546,8 @@ input,textarea,select{scroll-margin-top:65px;scroll-margin-bottom:85px}
  body.mercy-layout-fixed .pos-checkout{inset:76px 0 0 auto;width:min(410px,38vw);background:transparent;box-shadow:-8px 0 28px #00000014}
  body.mercy-layout-fixed .pos-sheet{max-width:none;width:100%;height:100%;max-height:none;border-radius:0;border-left:1px solid var(--line);box-shadow:none}
  body.mercy-layout-fixed.mercy-cart-open main{margin-right:min(410px,38vw)}
+ body.mercy-layout-fixed .pos-checkout [data-action="closePosCart"]{display:none}
+ body.mercy-layout-fixed #posFab{display:none!important}
  body.mercy-layout-bottom .pos-checkout{align-items:flex-end;justify-content:center}
  body.mercy-layout-bottom .pos-sheet{height:auto;max-height:72dvh;max-width:min(900px,calc(100vw - 230px));border-radius:22px 22px 0 0}
  body.mercy-layout-pos.mercy-selling #nav{display:none}
@@ -822,7 +824,7 @@ function mercyApplyLargeLayout(){
  document.body.classList.remove('mercy-layout-fixed','mercy-layout-bottom','mercy-layout-pos');
  document.body.classList.add('mercy-layout-'+mercyLargeLayout);
  document.body.classList.toggle('mercy-selling',screen==='Vender');
- document.body.classList.toggle('mercy-cart-open',screen==='Vender'&&(posCheckout||!!posSuccess));
+ document.body.classList.toggle('mercy-cart-open',screen==='Vender'&&((mercyLargeLayout==='fixed'&&window.matchMedia('(min-width:768px)').matches)||posCheckout||!!posSuccess));
 }
 function render(){
 mercyApplyLargeLayout();
@@ -1055,7 +1057,7 @@ if(fab){
  fab.setAttribute('aria-label','Abrir carrito con '+count+' artículos por '+money(total));
  document.body.classList.toggle('has-pos-fab',showFab);
 }
-if(screen==='Vender'&&(posCheckout||posSuccess)){
+if(screen==='Vender'&&(posCheckout||posSuccess||(mercyLargeLayout==='fixed'&&window.matchMedia('(min-width:768px)').matches))){
 let m=document.createElement('div');m.className='pos-checkout';m.id='posModal';
 let lines=Object.entries(cart),sum=lines.reduce((n,[c,q])=>n+Number(products.find(p=>p.codigo===c)?.precio||0)*q,0);
 if(posSuccess){let v=posSuccess;m.innerHTML='<div class="pos-sheet"><div class="pos-success"><div class="success-icon">✅</div><h3>¡Venta registrada!</h3><p class="muted">'+(v.payment==='Fiado'?'La venta quedó pendiente de cobro.':'El cobro se guardó correctamente.')+'</p></div><div class="item"><span>Total</span><b>'+money(v.total)+'</b></div><div class="item"><span>Artículos</span><b>'+v.count+'</b></div><div class="item"><span>Pago</span><b>'+esc(v.payment)+'</b></div>'+(v.payment==='Fiado'?'<div class="item"><span>Cliente</span><b>'+esc(v.cliente)+'</b></div><div class="item"><b>Pendiente de cobro</b><b>'+money(v.total)+'</b></div>':'')+(v.payment==='Efectivo'?'<div class="item"><span>Recibido</span><b>'+money(v.recibido)+'</b></div><div class="item"><span>Cambio</span><b>'+money(v.cambio)+'</b></div>':'')+'<div class="actions"><button class="btn" data-action="posNewSale">Nueva venta</button><button class="btn ghost" data-action="posDone">Cerrar</button></div></div>'}
