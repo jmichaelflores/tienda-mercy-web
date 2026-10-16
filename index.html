@@ -621,6 +621,49 @@ input,textarea,select{scroll-margin-top:65px;scroll-margin-bottom:85px}
  body.mercy-pc-balanced .pos-rows{grid-template-columns:repeat(auto-fill,minmax(175px,1fr))!important}
  body.mercy-pc-pos .pos-rows{grid-template-columns:repeat(auto-fill,minmax(165px,1fr))!important}
 }
+</style><style id="mercy-pc-all-screens">
+/* Los ocho presets se aplican a todos los modulos; movil intacto. */
+@media(min-width:768px){
+ body[class*="mercy-pc-"] main{box-sizing:border-box;min-width:0}
+ body[class*="mercy-pc-"] main>h3,body[class*="mercy-pc-"] main>h2,body[class*="mercy-pc-"] main>.card,body[class*="mercy-pc-"] main>.grid,body[class*="mercy-pc-"] main>.product-list,body[class*="mercy-pc-"] main>.pagination,body[class*="mercy-pc-"] main>.chips,body[class*="mercy-pc-"] main>.row,body[class*="mercy-pc-"] main>.field,body[class*="mercy-pc-"] main>.mercy-setting-section{box-sizing:border-box;width:100%;max-width:var(--mercy-page-width,1120px);margin-left:auto;margin-right:auto}
+ body[class*="mercy-pc-"] main .card,body[class*="mercy-pc-"] main .product-card,body[class*="mercy-pc-"] main .mercy-setting-section{min-width:0}
+ body[class*="mercy-pc-"] main .grid{grid-template-columns:repeat(auto-fit,minmax(min(100%,185px),1fr))}
+ body[class*="mercy-pc-"] main .product-list{grid-template-columns:repeat(auto-fill,minmax(min(100%,340px),1fr));align-items:start}
+ body[class*="mercy-pc-"] main .product-card{height:100%;align-items:center}
+ body[class*="mercy-pc-"] main .product-info{min-width:0;overflow-wrap:anywhere}
+ body[class*="mercy-pc-"] main .mercy-setting-section{overflow:hidden}
+ body[class*="mercy-pc-"] main .mercy-setting-section>.card{max-width:100%}
+ body[class*="mercy-pc-"] main .pos-layout{max-width:var(--mercy-page-width,1120px);margin-left:auto;margin-right:auto}
+ body.mercy-pc-balanced{--mercy-page-width:1120px;--mercy-panel-radius:15px}
+ body.mercy-pc-catalog{--mercy-page-width:1480px;--mercy-panel-radius:17px}
+ body.mercy-pc-pos{--mercy-page-width:1480px;--mercy-panel-radius:12px}
+ body.mercy-pc-studio{--mercy-page-width:1220px;--mercy-panel-radius:18px}
+ body.mercy-pc-minimal{--mercy-page-width:1080px;--mercy-panel-radius:8px}
+ body.mercy-pc-compact{--mercy-page-width:1400px;--mercy-panel-radius:9px}
+ body.mercy-pc-categories{--mercy-page-width:1250px;--mercy-panel-radius:19px}
+ body.mercy-pc-adaptive{--mercy-page-width:1180px;--mercy-panel-radius:19px}
+ body[class*="mercy-pc-"] main .card,body[class*="mercy-pc-"] main .product-card,body[class*="mercy-pc-"] main .mercy-setting-section{border-radius:var(--mercy-panel-radius)}
+ body.mercy-pc-minimal main{background:#f8fafc}
+ body.mercy-pc-minimal main .card,body.mercy-pc-minimal main .product-card,body.mercy-pc-minimal main .mercy-setting-section{box-shadow:none;border-color:#e1e5e9}
+ body.mercy-pc-compact main .card,body.mercy-pc-compact main .product-card{padding:10px}
+ body.mercy-pc-compact main .product-list{grid-template-columns:repeat(auto-fill,minmax(min(100%,275px),1fr));gap:8px}
+ body.mercy-pc-catalog main .product-list{grid-template-columns:repeat(auto-fill,minmax(min(100%,290px),1fr));gap:16px}
+ body.mercy-pc-catalog main .product-card{min-height:115px}
+ body.mercy-pc-pos main .product-list{grid-template-columns:repeat(auto-fill,minmax(min(100%,300px),1fr))}
+ body.mercy-pc-categories main .chips{display:flex;flex-wrap:wrap;gap:12px}
+ body.mercy-pc-categories main .chips .chip{min-height:48px;border-radius:13px}
+ body.mercy-pc-categories main .product-card{border-color:color-mix(in srgb,var(--pink) 24%,var(--line))}
+ body.mercy-pc-adaptive main .card,body.mercy-pc-adaptive main .product-card,body.mercy-pc-adaptive main .mercy-setting-section{border-color:color-mix(in srgb,var(--pink) 28%,var(--line));box-shadow:0 4px 20px color-mix(in srgb,var(--pink) 8%,transparent)}
+ body.mercy-pc-studio main .card,body.mercy-pc-studio main .product-card,body.mercy-pc-studio main .mercy-setting-section{background:#20253a;color:#f7f4ff;border-color:#3a405a}
+ body.mercy-pc-studio main .product-name,body.mercy-pc-studio main .product-info,body.mercy-pc-studio main .mercy-setting-section summary{color:#f7f4ff}
+ body.mercy-pc-studio main .muted,body.mercy-pc-studio main .product-meta{color:#b8c1d6}
+ body.mercy-pc-studio main .field,body.mercy-pc-studio main input,body.mercy-pc-studio main select{background:#292f48;color:#f7f4ff;border-color:#4a526a}
+ body.mercy-pc-studio main .card .item{border-color:#3a405a}
+}
+@media(min-width:1200px){
+ body.mercy-pc-compact main .grid{grid-template-columns:repeat(auto-fit,minmax(155px,1fr))}
+ body.mercy-pc-catalog main .grid{grid-template-columns:repeat(auto-fit,minmax(205px,1fr))}
+}
 </style></head><body><header><button type="button" class="brand-row mercy-brand-home" data-go="Inicio" aria-label="Ir al inicio de la tienda"><span id="storeLogo" class="brand-logo">🏪</span><span class="brand-copy"><strong id="title">Tienda Mercy</strong><small>Gestión de tienda e inventario</small></span></button><div class="mercy-header-actions"><button type="button" id="mercyGuideButton" class="mercy-icon-btn" aria-label="Iniciar guía interactiva" title="Guía de uso">❔</button><button type="button" id="mercyBellButton" class="mercy-icon-btn" aria-label="Ver notificaciones" title="Notificaciones">🔔<span id="mercyBadge" class="mercy-badge" hidden></span></button></div></header><main id="main"></main><div id="mercyToastStack" class="mercy-toast-stack" role="status" aria-live="polite"></div><div id="quickFabWrap" class="quick-fab-wrap" hidden><div id="quickFabMenu" class="quick-fab-menu" hidden><button type="button" data-action="quickNewProduct">📦 Nuevo producto</button><button type="button" data-action="quickReceive">📥 Recibir mercadería</button></div><button id="quickFab" type="button" data-action="toggleQuickFab" aria-label="Abrir acciones rápidas" aria-expanded="false">+</button></div><button id="posFab" type="button" data-action="openPosCart" aria-label="Ver carrito y finalizar compra"><span class="fab-icon">🛒</span><span class="fab-details">Ver carrito</span></button><button id="up" aria-label="Volver arriba">↑</button><nav id="nav"></nav><div id="mercyOverlay" class="mercy-overlay" hidden></div><div id="mercyTour" class="mercy-tour" hidden></div>
 <script>
 /* Conector web de produccion: mismo contrato de API que la APK. */
