@@ -765,6 +765,19 @@ body[class*="mercy-pc-"] #main>.mercy-unified-carousel .mercy-slide-pager{margin
 @media(min-width:768px) and (max-width:1023px){
 #mercyOverlay>.mercy-panel{width:min(420px,calc(100vw - 190px));padding:20px 16px}
 }
+</style><style id="mercy-pc-barcode-gun">
+@media(min-width:768px){
+ .mercy-desktop-scanner-layer{position:fixed;inset:0;z-index:30050;display:flex;align-items:center;justify-content:center;padding:20px;background:#17203399;backdrop-filter:blur(3px)}
+ .mercy-desktop-scanner-panel{box-sizing:border-box;width:min(100%,510px);background:#fff;color:#26352f;border-radius:20px;padding:24px;box-shadow:0 22px 70px #0003;display:grid;gap:16px}
+ .mercy-desktop-scanner-panel h3{margin:0;font-size:20px}
+ .mercy-desktop-scanner-panel p{margin:0;line-height:1.5;color:#586b62}
+ .mercy-desktop-scanner-panel form{display:flex;gap:10px;min-width:0}
+ .mercy-desktop-scanner-panel form .field{flex:1;min-width:0}
+ .mercy-desktop-scanner-panel small{color:#6a7771}
+ button[data-action="scanProductSearch"],button[data-action="scanSale"],button[data-action="scanReceive"],button[data-action="scanReceiveSearch"],button[data-action="posCameraToggle"]{font-size:0!important}
+ button[data-action="scanProductSearch"]::after,button[data-action="scanSale"]::after,button[data-action="scanReceive"]::after,button[data-action="scanReceiveSearch"]::after,button[data-action="posCameraToggle"]::after{content:"🔫 Lector";font-size:13px;font-weight:700;white-space:nowrap}
+}
+@media(max-width:767px){.mercy-desktop-scanner-layer{display:none}}
 </style></head><body><header><button type="button" class="brand-row mercy-brand-home" data-go="Inicio" aria-label="Ir al inicio de la tienda"><span id="storeLogo" class="brand-logo">🏪</span><span class="brand-copy"><strong id="title">Tienda Mercy</strong><small>Gestión de tienda e inventario</small></span></button><div class="mercy-header-actions"><button type="button" id="mercyGuideButton" class="mercy-icon-btn" aria-label="Iniciar guía interactiva" title="Guía de uso">❔</button><button type="button" id="mercyBellButton" class="mercy-icon-btn" aria-label="Ver notificaciones" title="Notificaciones">🔔<span id="mercyBadge" class="mercy-badge" hidden></span></button></div></header><main id="main"></main><div id="mercyToastStack" class="mercy-toast-stack" role="status" aria-live="polite"></div><div id="quickFabWrap" class="quick-fab-wrap" hidden><div id="quickFabMenu" class="quick-fab-menu" hidden><button type="button" data-action="quickNewProduct">📦 Nuevo producto</button><button type="button" data-action="quickReceive">📥 Recibir mercadería</button></div><button id="quickFab" type="button" data-action="toggleQuickFab" aria-label="Abrir acciones rápidas" aria-expanded="false">+</button></div><button id="posFab" type="button" data-action="openPosCart" aria-label="Ver carrito y finalizar compra"><span class="fab-icon">🛒</span><span class="fab-details">Ver carrito</span></button><button id="up" aria-label="Volver arriba">↑</button><nav id="nav"></nav><div id="mercyOverlay" class="mercy-overlay" hidden></div><div id="mercyTour" class="mercy-tour" hidden></div>
 <script>
 /* Conector web de produccion: mismo contrato de API que la APK. */
@@ -1011,7 +1024,33 @@ let mercySearchTimer=null;
 
 let mercyInlineStream=null,mercyInlineTimer=null,mercyInlineBusy=false;
 function mercyCloseInlineScan(){if(mercyInlineTimer){clearInterval(mercyInlineTimer);mercyInlineTimer=null}if(mercyInlineStream){mercyInlineStream.getTracks().forEach(t=>t.stop());mercyInlineStream=null}document.getElementById('mercyInlineScan')?.remove()}
-async function mercyInlineScan(id){mercyCloseInlineScan();const el=document.createElement('div');el.id='mercyInlineScan';el.className='mercy-inline-scan';el.innerHTML='<div class="mercy-inline-panel"><div class="mercy-inline-top"><b>📷 Buscar por código de barras</b><button type="button" class="small" id="mercyInlineClose">Cerrar ✕</button></div><div class="mercy-inline-video"><video id="mercyInlineVideo" autoplay muted playsinline></video><div class="mercy-inline-frame"></div></div><div class="mercy-inline-hint" id="mercyInlineHint">Coloca el código dentro del recuadro. La pantalla permanece visible detrás del lector.</div><div class="mercy-inline-manual"><input class="field" id="mercyInlineCode" placeholder="O escribe el código" inputmode="numeric"><button type="button" class="small" id="mercyInlineSubmit">Usar código</button></div></div>';document.body.appendChild(el);const finish=code=>{if(!code)return;mercyCloseInlineScan();const cb=pending[id];delete pending[id];if(cb)cb({ok:true,code:String(code)})};document.getElementById('mercyInlineClose').onclick=()=>mercyCloseInlineScan();document.getElementById('mercyInlineSubmit').onclick=()=>finish(document.getElementById('mercyInlineCode').value.trim());document.getElementById('mercyInlineCode').onkeydown=e=>{if(e.key==='Enter')finish(e.target.value.trim())};const hint=document.getElementById('mercyInlineHint');if(!navigator.mediaDevices?.getUserMedia){hint.textContent='Cámara no disponible. Puedes introducir el código manualmente.';return}try{const stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:'environment'}},audio:false});if(!document.getElementById('mercyInlineScan')){stream.getTracks().forEach(t=>t.stop());return}mercyInlineStream=stream;const video=document.getElementById('mercyInlineVideo');video.srcObject=stream;await video.play();if(!('BarcodeDetector' in window)){hint.textContent='El navegador no admite lectura automática. Introduce el código manualmente.';return}const detector=new BarcodeDetector({formats:['ean_13','ean_8','upc_a','upc_e','code_128','code_39','itf','qr_code']});mercyInlineTimer=setInterval(async()=>{if(mercyInlineBusy||!video.videoWidth)return;mercyInlineBusy=true;try{const found=await detector.detect(video);if(found[0]?.rawValue)finish(found[0].rawValue)}catch(e){}finally{mercyInlineBusy=false}},400)}catch(e){hint.textContent='No se pudo abrir la cámara. Comprueba los permisos o escribe el código.'}}
+function mercyDesktopBarcodeDialog(onCode){
+ document.getElementById('mercyDesktopScanner')?.remove();
+ const layer=document.createElement('div');
+ layer.id='mercyDesktopScanner';
+ layer.className='mercy-desktop-scanner-layer';
+ layer.innerHTML='<section class="mercy-desktop-scanner-panel" role="dialog" aria-modal="true" aria-label="Pistola lectora de códigos"><div class="row"><h3>🔫 Pistola lectora de códigos</h3><button type="button" class="small" data-scanner-close="1">✕</button></div><p>Conecta la pistola USB o Bluetooth, coloca el cursor en el campo y lee el código. Si tu pistola envía Enter, se procesará automáticamente.</p><form id="mercyDesktopScannerForm"><input id="mercyDesktopScannerCode" class="field" type="text" autocomplete="off" spellcheck="false" placeholder="Esperando código de barras..." required><button class="btn" type="submit">Usar código</button></form><small>No se utiliza la cámara en PC. También puedes escribir el código.</small></section>';
+ document.body.appendChild(layer);
+ const input=layer.querySelector('#mercyDesktopScannerCode');
+ const close=()=>layer.remove();
+ layer.querySelector('[data-scanner-close]').onclick=close;
+ layer.addEventListener('click',e=>{if(e.target===layer)close()});
+ layer.querySelector('form').addEventListener('submit',e=>{
+  e.preventDefault();const code=input.value.trim();if(!code)return;
+  close();onCode(code);
+ });
+ requestAnimationFrame(()=>input.focus({preventScroll:true}));
+}
+async function mercyInlineScan(id){
+ mercyCloseInlineScan();
+ if(window.matchMedia('(min-width:768px)').matches){
+  mercyDesktopBarcodeDialog(code=>{
+   const cb=pending[id];delete pending[id];
+   if(cb)cb({ok:true,code});
+  });
+  return;
+ }
+ mercyCloseInlineScan();const el=document.createElement('div');el.id='mercyInlineScan';el.className='mercy-inline-scan';el.innerHTML='<div class="mercy-inline-panel"><div class="mercy-inline-top"><b>📷 Buscar por código de barras</b><button type="button" class="small" id="mercyInlineClose">Cerrar ✕</button></div><div class="mercy-inline-video"><video id="mercyInlineVideo" autoplay muted playsinline></video><div class="mercy-inline-frame"></div></div><div class="mercy-inline-hint" id="mercyInlineHint">Coloca el código dentro del recuadro. La pantalla permanece visible detrás del lector.</div><div class="mercy-inline-manual"><input class="field" id="mercyInlineCode" placeholder="O escribe el código" inputmode="numeric"><button type="button" class="small" id="mercyInlineSubmit">Usar código</button></div></div>';document.body.appendChild(el);const finish=code=>{if(!code)return;mercyCloseInlineScan();const cb=pending[id];delete pending[id];if(cb)cb({ok:true,code:String(code)})};document.getElementById('mercyInlineClose').onclick=()=>mercyCloseInlineScan();document.getElementById('mercyInlineSubmit').onclick=()=>finish(document.getElementById('mercyInlineCode').value.trim());document.getElementById('mercyInlineCode').onkeydown=e=>{if(e.key==='Enter')finish(e.target.value.trim())};const hint=document.getElementById('mercyInlineHint');if(!navigator.mediaDevices?.getUserMedia){hint.textContent='Cámara no disponible. Puedes introducir el código manualmente.';return}try{const stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:'environment'}},audio:false});if(!document.getElementById('mercyInlineScan')){stream.getTracks().forEach(t=>t.stop());return}mercyInlineStream=stream;const video=document.getElementById('mercyInlineVideo');video.srcObject=stream;await video.play();if(!('BarcodeDetector' in window)){hint.textContent='El navegador no admite lectura automática. Introduce el código manualmente.';return}const detector=new BarcodeDetector({formats:['ean_13','ean_8','upc_a','upc_e','code_128','code_39','itf','qr_code']});mercyInlineTimer=setInterval(async()=>{if(mercyInlineBusy||!video.videoWidth)return;mercyInlineBusy=true;try{const found=await detector.detect(video);if(found[0]?.rawValue)finish(found[0].rawValue)}catch(e){}finally{mercyInlineBusy=false}},400)}catch(e){hint.textContent='No se pudo abrir la cámara. Comprueba los permisos o escribe el código.'}}
 function posStopCamera(){if(posScanTimer){clearInterval(posScanTimer);posScanTimer=null}if(posScanStream){posScanStream.getTracks().forEach(t=>t.stop());posScanStream=null}}
 function posCartAddCode(code){code=String(code||'').trim();if(!code)return;const p=products.find(x=>String(x.codigo).trim()===code);if(!p){posStopCamera();posCamera=false;productIndex=-1;draft={codigo:code,stockInicial:''};cartProductReturn=true;posCheckout=false;go('Formulario producto');return}if(Number(p.existencia)<=Number(cart[p.codigo]||0)){alertMessage('No hay existencias suficientes',true);return}cart[p.codigo]=Number(cart[p.codigo]||0)+1;render()}
 async function posStartCamera(){if(!posCamera||!posCheckout)return;const v=$('posCameraVideo');if(!v)return;if(!navigator.mediaDevices?.getUserMedia){const n=$('posCameraNotice');if(n)n.textContent='La cámara requiere HTTPS y permisos del navegador. Usa la búsqueda manual.';return}try{posStopCamera();const stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:'environment'}},audio:false});if(!posCamera||!posCheckout){stream.getTracks().forEach(t=>t.stop());return}posScanStream=stream;v.srcObject=stream;await v.play();if(!('BarcodeDetector' in window)){const n=$('posCameraNotice');if(n)n.textContent='Este navegador no admite lectura integrada de códigos. Puedes buscar por nombre o código.';return}const detector=new BarcodeDetector({formats:['ean_13','ean_8','upc_a','upc_e','code_128','code_39','itf','qr_code']});posScanTimer=setInterval(async()=>{if(posScanBusy||!posCamera||!v.videoWidth)return;posScanBusy=true;try{const found=await detector.detect(v);const code=found[0]?.rawValue;if(code&&!(code===posLastScan&&Date.now()-posLastScanAt<1800)){posLastScan=code;posLastScanAt=Date.now();posCartAddCode(code)}}catch(e){}finally{posScanBusy=false}},450)}catch(e){const n=$('posCameraNotice');if(n)n.textContent='No se pudo abrir la cámara. Revisa los permisos o usa la búsqueda manual.'}}
@@ -1321,6 +1360,13 @@ document.addEventListener('keydown',e=>{
  if(e.key==='Enter'&&e.target?.id==='mercyUsbCode'){
   e.preventDefault();e.stopPropagation();mercyUsbAddCode();
  }
+},true);
+document.addEventListener('click',e=>{
+ if(!window.matchMedia('(min-width:768px)').matches)return;
+ const button=e.target.closest('button[data-action="posCameraToggle"]');
+ if(!button)return;
+ e.preventDefault();e.stopImmediatePropagation();
+ mercyDesktopBarcodeDialog(code=>posCartAddCode(code));
 },true);
 document.addEventListener('click',async e=>{
 let t=e.target.closest('button');if(!t)return;
