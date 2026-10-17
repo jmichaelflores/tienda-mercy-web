@@ -811,6 +811,38 @@ body[class*="mercy-pc-"] #main>.mercy-unified-carousel .mercy-slide-pager{margin
 .mercy-daily-verse{display:flex;align-items:flex-start;gap:14px;margin:0 0 16px;padding:17px 20px;border-radius:18px;background:linear-gradient(120deg,color-mix(in srgb,var(--pink) 11%,white),color-mix(in srgb,var(--green) 9%,white));border:1px solid color-mix(in srgb,var(--pink) 17%,transparent);color:var(--text,#27323a)}
 .mercy-verse-mark{display:grid;place-items:center;flex:0 0 36px;width:36px;height:36px;border-radius:12px;background:var(--pink);color:white;font-size:20px}
 .mercy-verse-copy{min-width:0}.mercy-verse-copy small{font-size:10px;font-weight:800;letter-spacing:.13em;color:var(--pink)}.mercy-verse-copy p{margin:7px 0;line-height:1.5;font-size:clamp(14px,1.5vw,17px);font-weight:600}.mercy-verse-copy strong{font-size:12px;color:var(--green)}
+</style><style id="mercy-pc-responsive-overflow-fix-2026">
+/* Ajustes de desbordamiento: conserva la apariencia original. */
+@media (min-width:768px){
+ html,body{max-width:100%;overflow-x:clip}
+ body{min-width:0}
+ #main{box-sizing:border-box;min-width:0;max-width:calc(100vw - var(--mercy-side,190px));overflow-x:clip;overflow-y:auto;scrollbar-gutter:stable}
+ #main>*,#main section,#main article,#main .card,#main .panel,#main .pos-layout,#main .pos-toolbar{min-width:0;max-width:100%;box-sizing:border-box}
+ #main img,#main video,#main canvas,#main svg{max-width:100%}
+ #main .row,#main .pos-toolbar,#main .mercy-desktop-screen-actions{min-width:0;flex-wrap:wrap}
+ #main .grid,#main .pos-rows{min-width:0;max-width:100%}
+ #main .grid>* ,#main .pos-rows>*{min-width:0}
+ #main input,#main select,#main textarea{max-width:100%;box-sizing:border-box}
+ #main .table-wrap,#main .table-responsive,#main .receive-history-wrap,#main .mercy-table-scroll{max-width:100%;overflow-x:auto;overscroll-behavior-x:contain}
+ #main .mercy-unified-carousel{max-width:100%;min-width:0}
+ #main .mercy-unified-carousel *{box-sizing:border-box}
+ #main .mercy-daily-verse{max-width:100%}
+ #main .mercy-verse-copy{min-width:0;overflow-wrap:anywhere}
+ #nav{box-sizing:border-box}
+}
+@media (min-width:768px) and (max-width:1100px){
+ body{--mercy-side:168px}
+ #main{padding:14px 15px}
+ #nav{padding:10px 7px;gap:4px}
+ #nav button{min-height:42px;padding:7px 9px;gap:8px}
+ #main .pos-rows{grid-template-columns:repeat(2,minmax(0,1fr))}
+ #main .mercy-desktop-screen-actions>*{min-width:0}
+}
+@media (min-width:768px) and (max-height:700px){
+ #main{padding-top:12px;padding-bottom:12px}
+ #nav{padding-top:9px;padding-bottom:9px;gap:3px}
+ #nav button{min-height:39px;padding-top:5px;padding-bottom:5px}
+}
 </style></head><body><header><button type="button" class="brand-row mercy-brand-home" data-go="Inicio" aria-label="Ir al inicio de la tienda"><span id="storeLogo" class="brand-logo">🏪</span><span class="brand-copy"><strong id="title">Tienda Mercy</strong><small>Gestión de tienda e inventario</small></span></button><div class="mercy-header-actions"><button type="button" id="mercyGuideButton" class="mercy-icon-btn" aria-label="Iniciar guía interactiva" title="Guía de uso">❔</button><button type="button" id="mercyBellButton" class="mercy-icon-btn" aria-label="Ver notificaciones" title="Notificaciones">🔔<span id="mercyBadge" class="mercy-badge" hidden></span></button></div></header><main id="main"></main><div id="mercyToastStack" class="mercy-toast-stack" role="status" aria-live="polite"></div><div id="quickFabWrap" class="quick-fab-wrap" hidden><div id="quickFabMenu" class="quick-fab-menu" hidden><button type="button" data-action="quickNewProduct">📦 Nuevo producto</button><button type="button" data-action="quickReceive">📥 Recibir mercadería</button></div><button id="quickFab" type="button" data-action="toggleQuickFab" aria-label="Abrir acciones rápidas" aria-expanded="false">+</button></div><button id="posFab" type="button" data-action="openPosCart" aria-label="Ver carrito y finalizar compra"><span class="fab-icon">🛒</span><span class="fab-details">Ver carrito</span></button><button id="up" aria-label="Volver arriba">↑</button><nav id="nav"></nav><div id="mercyOverlay" class="mercy-overlay" hidden></div><div id="mercyTour" class="mercy-tour" hidden></div>
 <script>
 /* Conector web de produccion: mismo contrato de API que la APK. */
