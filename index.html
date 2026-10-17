@@ -883,6 +883,43 @@ body[class*="mercy-pc-"] #main>.mercy-unified-carousel .mercy-slide-pager{margin
  body.mercy-selling #main{padding-top:12px;padding-bottom:10px}
  body.mercy-selling #main .pos-rows{gap:8px;margin-top:8px}
 }
+</style><style id="mercy-pc-cart-fit-screen-2026">
+/* Venta: el formulario de cobro cabe en pantallas de mini laptop. */
+@media (min-width:768px){
+ body.mercy-selling .pos-checkout .pos-sheet{display:flex!important;flex-direction:column;gap:clamp(2px,.45vh,6px);overflow-y:auto;overflow-x:hidden}
+ body.mercy-selling .pos-checkout .pos-sheet>.row{flex:0 0 auto}
+ body.mercy-selling .pos-checkout .pos-sheet>.row h3{margin:0}
+ body.mercy-selling .pos-checkout .pos-sheet>.mercy-usb-scanner{margin:0!important;padding:6px 8px!important;gap:3px!important}
+ body.mercy-selling .pos-checkout .pos-sheet>.mercy-usb-scanner small{display:none}
+ body.mercy-selling .pos-checkout .pos-sheet>.mercy-usb-scanner label{font-size:11px}
+ body.mercy-selling .pos-checkout .pos-sheet .mercy-usb-row{gap:5px}
+ body.mercy-selling .pos-checkout .pos-sheet .mercy-usb-row input{min-width:0}
+ body.mercy-selling .pos-checkout .pos-sheet>.pos-scan-search{margin:0;gap:5px;flex:0 0 auto}
+ body.mercy-selling .pos-checkout .pos-sheet>.pos-search-results:empty{display:none}
+ body.mercy-selling .pos-checkout .pos-sheet>.pos-search-results:not(:empty){max-height:70px;overflow:auto}
+ body.mercy-selling .pos-checkout .pos-sheet>.pos-cart-products{flex:1 1 auto;min-height:0;max-height:none;overflow-y:auto}
+ body.mercy-selling .pos-checkout .pos-sheet>.item{padding:3px 0;flex:0 0 auto}
+ body.mercy-selling .pos-checkout .pos-sheet>label{margin:0;font-size:11px;line-height:1.2}
+ body.mercy-selling .pos-checkout .pos-sheet>.pos-payment-grid{margin:0;gap:4px;flex:0 0 auto}
+ body.mercy-selling .pos-checkout .pos-sheet>.pos-payment-grid button{padding:5px 2px;gap:1px;font-size:10px;min-height:34px}
+ body.mercy-selling .pos-checkout .pos-sheet .pay-ico{font-size:15px;line-height:1}
+ body.mercy-selling .pos-checkout .pos-sheet>#cashFields label,
+ body.mercy-selling .pos-checkout .pos-sheet>#creditFields label{font-size:11px}
+ body.mercy-selling .pos-checkout .pos-sheet>#cashFields .pos-quick{margin:3px 0;gap:4px;flex-wrap:nowrap}
+ body.mercy-selling .pos-checkout .pos-sheet>#cashFields .pos-quick button{min-width:0;flex:1;padding:5px 2px}
+ body.mercy-selling .pos-checkout .pos-sheet>#cashFields .muted{margin:3px 0;font-size:11px}
+ body.mercy-selling .pos-checkout .pos-sheet>#creditFields .muted{margin:3px 0;font-size:11px}
+ body.mercy-selling .pos-checkout .pos-sheet>.actions{margin-top:2px!important;gap:5px;flex:0 0 auto}
+ body.mercy-selling .pos-checkout .pos-sheet>.actions button{min-height:35px;padding:6px}
+ body.mercy-selling .pos-checkout .pos-sheet .field{min-height:32px;padding:6px 8px}
+}
+@media (min-width:768px) and (max-height:800px){
+ body.mercy-selling .pos-checkout .pos-sheet{padding:8px 10px!important;gap:2px}
+ body.mercy-selling .pos-checkout .pos-sheet>.row h3{font-size:16px}
+ body.mercy-selling .pos-checkout .pos-sheet>.pos-payment-grid button{min-height:31px;padding:3px 2px}
+ body.mercy-selling .pos-checkout .pos-sheet>.item .pos-total{font-size:21px!important}
+ body.mercy-selling .pos-checkout .pos-sheet .field{min-height:29px}
+}
 </style></head><body><header><button type="button" class="brand-row mercy-brand-home" data-go="Inicio" aria-label="Ir al inicio de la tienda"><span id="storeLogo" class="brand-logo">🏪</span><span class="brand-copy"><strong id="title">Tienda Mercy</strong><small>Gestión de tienda e inventario</small></span></button><div class="mercy-header-actions"><button type="button" id="mercyGuideButton" class="mercy-icon-btn" aria-label="Iniciar guía interactiva" title="Guía de uso">❔</button><button type="button" id="mercyBellButton" class="mercy-icon-btn" aria-label="Ver notificaciones" title="Notificaciones">🔔<span id="mercyBadge" class="mercy-badge" hidden></span></button></div></header><main id="main"></main><div id="mercyToastStack" class="mercy-toast-stack" role="status" aria-live="polite"></div><div id="quickFabWrap" class="quick-fab-wrap" hidden><div id="quickFabMenu" class="quick-fab-menu" hidden><button type="button" data-action="quickNewProduct">📦 Nuevo producto</button><button type="button" data-action="quickReceive">📥 Recibir mercadería</button></div><button id="quickFab" type="button" data-action="toggleQuickFab" aria-label="Abrir acciones rápidas" aria-expanded="false">+</button></div><button id="posFab" type="button" data-action="openPosCart" aria-label="Ver carrito y finalizar compra"><span class="fab-icon">🛒</span><span class="fab-details">Ver carrito</span></button><button id="up" aria-label="Volver arriba">↑</button><nav id="nav"></nav><div id="mercyOverlay" class="mercy-overlay" hidden></div><div id="mercyTour" class="mercy-tour" hidden></div>
 <script>
 /* Conector web de produccion: mismo contrato de API que la APK. */
