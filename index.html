@@ -861,6 +861,28 @@ body[class*="mercy-pc-"] #main>.mercy-unified-carousel .mercy-slide-pager{margin
  #nav{overscroll-behavior-y:contain}
  .mercy-overlay .mercy-panel,.mercy-overlay .mercy-dialog,.pos-sheet,.mercy-combo-list,.mercy-preview-dialog{overscroll-behavior-y:contain}
 }
+</style><style id="mercy-pc-selling-short-screen-2026">
+/* Venta en mini laptop: conservar desplazamiento funcional sin dos barras visibles. */
+@media (min-width:768px){
+ body.mercy-selling #main{scrollbar-width:none!important;-ms-overflow-style:none}
+ body.mercy-selling #main::-webkit-scrollbar{display:none}
+ body.mercy-selling .pos-checkout .pos-sheet{scrollbar-width:thin;scrollbar-color:color-mix(in srgb,var(--pink) 35%,transparent) transparent}
+ body.mercy-selling .pos-layout{padding-bottom:20px}
+ body.mercy-selling .pos-checkout .pos-sheet{box-sizing:border-box;overscroll-behavior-y:contain}
+}
+@media (min-width:768px) and (max-height:800px){
+ body.mercy-selling .pos-checkout .pos-sheet{padding:12px 14px!important}
+ body.mercy-selling .pos-checkout .pos-sheet h3{margin:0 0 6px!important;font-size:18px}
+ body.mercy-selling .pos-checkout .pos-sheet .row{gap:6px}
+ body.mercy-selling .pos-checkout .pos-sheet .mercy-usb-scanner{padding:8px!important;margin:5px 0!important}
+ body.mercy-selling .pos-checkout .pos-sheet .mercy-usb-scanner p{margin:4px 0!important}
+ body.mercy-selling .pos-checkout .pos-sheet .field{min-height:34px}
+ body.mercy-selling .pos-checkout .pos-sheet .pos-total{font-size:24px!important}
+ body.mercy-selling .pos-checkout .pos-sheet .actions{margin-top:8px!important;gap:6px}
+ body.mercy-selling .pos-checkout .pos-sheet .item{padding:5px 0}
+ body.mercy-selling #main{padding-top:12px;padding-bottom:10px}
+ body.mercy-selling #main .pos-rows{gap:8px;margin-top:8px}
+}
 </style></head><body><header><button type="button" class="brand-row mercy-brand-home" data-go="Inicio" aria-label="Ir al inicio de la tienda"><span id="storeLogo" class="brand-logo">🏪</span><span class="brand-copy"><strong id="title">Tienda Mercy</strong><small>Gestión de tienda e inventario</small></span></button><div class="mercy-header-actions"><button type="button" id="mercyGuideButton" class="mercy-icon-btn" aria-label="Iniciar guía interactiva" title="Guía de uso">❔</button><button type="button" id="mercyBellButton" class="mercy-icon-btn" aria-label="Ver notificaciones" title="Notificaciones">🔔<span id="mercyBadge" class="mercy-badge" hidden></span></button></div></header><main id="main"></main><div id="mercyToastStack" class="mercy-toast-stack" role="status" aria-live="polite"></div><div id="quickFabWrap" class="quick-fab-wrap" hidden><div id="quickFabMenu" class="quick-fab-menu" hidden><button type="button" data-action="quickNewProduct">📦 Nuevo producto</button><button type="button" data-action="quickReceive">📥 Recibir mercadería</button></div><button id="quickFab" type="button" data-action="toggleQuickFab" aria-label="Abrir acciones rápidas" aria-expanded="false">+</button></div><button id="posFab" type="button" data-action="openPosCart" aria-label="Ver carrito y finalizar compra"><span class="fab-icon">🛒</span><span class="fab-details">Ver carrito</span></button><button id="up" aria-label="Volver arriba">↑</button><nav id="nav"></nav><div id="mercyOverlay" class="mercy-overlay" hidden></div><div id="mercyTour" class="mercy-tour" hidden></div>
 <script>
 /* Conector web de produccion: mismo contrato de API que la APK. */
