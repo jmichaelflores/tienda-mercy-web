@@ -920,6 +920,53 @@ body[class*="mercy-pc-"] #main>.mercy-unified-carousel .mercy-slide-pager{margin
  body.mercy-selling .pos-checkout .pos-sheet>.item .pos-total{font-size:21px!important}
  body.mercy-selling .pos-checkout .pos-sheet .field{min-height:29px}
 }
+</style><style id="mercy-pc-all-pages-adaptive-2026">
+/* Adaptacion global de vistas PC: espacio util, formularios y acciones. */
+@media (min-width:768px){
+ #main{width:auto;min-width:0;box-sizing:border-box}
+ #main>div,#main>section,#main>article,#main>form{min-width:0;max-width:100%;box-sizing:border-box}
+ #main .card,#main .panel,#main .tile,#main .item{min-width:0;box-sizing:border-box}
+ #main .row,#main .actions,#main .mercy-desktop-screen-actions{max-width:100%;min-width:0}
+ #main .row>*,#main .actions>*,#main .mercy-desktop-screen-actions>*{min-width:0}
+ #main .actions{flex-wrap:wrap;gap:clamp(5px,.7vw,10px)}
+ #main .actions button{max-width:100%;white-space:normal;overflow-wrap:anywhere}
+ #main .grid{max-width:100%;min-width:0}
+ #main .grid>*,#main [class*="-grid"]>*{min-width:0}
+ #main .field,#main input,#main select,#main textarea{max-width:100%;min-width:0}
+ #main h1,#main h2,#main h3,#main h4{overflow-wrap:anywhere}
+ #main .mercy-desktop-screen-actions{flex-wrap:wrap}
+ #main .mercy-desktop-only-action{max-width:100%}
+ #main .mercy-unified-carousel{min-width:0;max-width:100%}
+ #main .pos-layout{min-width:0}
+ #main .pos-toolbar>*{min-width:0}
+ #main .pos-rows>*{min-width:0}
+ #main .mercy-product-search{min-width:0;max-width:100%}
+ #main .mercy-product-search input{min-width:0;flex:1}
+ #main table{max-width:none}
+ #main :is(.table-wrap,.table-responsive,.receive-history-wrap,.mercy-table-scroll){max-width:100%;overflow-x:auto}
+}
+@media (min-width:768px) and (max-width:1199px){
+ #main{padding:clamp(10px,1.3vw,17px) clamp(10px,1.6vw,19px)}
+ #main .card,#main .panel{max-width:100%}
+ #main .mercy-desktop-screen-actions{gap:8px}
+ #main .mercy-desktop-only-action{min-width:0;padding:8px 10px}
+ #main .actions button{padding:8px 10px}
+ #main .pos-rows{grid-template-columns:repeat(2,minmax(0,1fr));gap:clamp(7px,1vw,12px)}
+ #main .pos-row{min-height:0;padding:clamp(9px,1.1vw,14px)}
+ #main .mercy-daily-verse{padding:clamp(10px,1.3vw,16px)}
+}
+@media (min-width:768px) and (max-height:750px){
+ #main{padding-top:10px;padding-bottom:10px}
+ #main h1,#main h2,#main h3{margin-top:5px;margin-bottom:8px}
+ #main .card,#main .panel{margin-top:5px;margin-bottom:7px}
+ #main .actions{margin-top:7px}
+ #main .mercy-desktop-screen-actions{margin-bottom:8px}
+ #main .mercy-daily-verse{margin-bottom:9px;padding:10px 12px}
+ #main .pos-cats{margin-top:6px;margin-bottom:6px}
+ #main .pos-rows{margin-top:8px}
+ #main .pos-layout{padding-bottom:12px}
+ #nav{padding-top:8px;padding-bottom:8px}
+}
 </style></head><body><header><button type="button" class="brand-row mercy-brand-home" data-go="Inicio" aria-label="Ir al inicio de la tienda"><span id="storeLogo" class="brand-logo">🏪</span><span class="brand-copy"><strong id="title">Tienda Mercy</strong><small>Gestión de tienda e inventario</small></span></button><div class="mercy-header-actions"><button type="button" id="mercyGuideButton" class="mercy-icon-btn" aria-label="Iniciar guía interactiva" title="Guía de uso">❔</button><button type="button" id="mercyBellButton" class="mercy-icon-btn" aria-label="Ver notificaciones" title="Notificaciones">🔔<span id="mercyBadge" class="mercy-badge" hidden></span></button></div></header><main id="main"></main><div id="mercyToastStack" class="mercy-toast-stack" role="status" aria-live="polite"></div><div id="quickFabWrap" class="quick-fab-wrap" hidden><div id="quickFabMenu" class="quick-fab-menu" hidden><button type="button" data-action="quickNewProduct">📦 Nuevo producto</button><button type="button" data-action="quickReceive">📥 Recibir mercadería</button></div><button id="quickFab" type="button" data-action="toggleQuickFab" aria-label="Abrir acciones rápidas" aria-expanded="false">+</button></div><button id="posFab" type="button" data-action="openPosCart" aria-label="Ver carrito y finalizar compra"><span class="fab-icon">🛒</span><span class="fab-details">Ver carrito</span></button><button id="up" aria-label="Volver arriba">↑</button><nav id="nav"></nav><div id="mercyOverlay" class="mercy-overlay" hidden></div><div id="mercyTour" class="mercy-tour" hidden></div>
 <script>
 /* Conector web de produccion: mismo contrato de API que la APK. */
