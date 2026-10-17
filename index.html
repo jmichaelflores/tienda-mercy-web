@@ -816,7 +816,7 @@ body[class*="mercy-pc-"] #main>.mercy-unified-carousel .mercy-slide-pager{margin
 /* Conector web de produccion: mismo contrato de API que la APK. */
 (function(){
 'use strict';
-const DEFAULT_URL='https://script.google.com/macros/s/AKfycbwg9_M5CnDxklLo7A0MlLsaymZ9DaJpRzH3OvC8iwuqTSTJopsOdbTV3cFDfGnH9XXf/exec';
+const DEFAULT_URL='https://script.google.com/macros/s/AKfycbwaVeDzrM4ewXXlTbmhDHoTJVUZ5oFbUfF29p3fgj8NdxmPW6L-HzpPs3ymzSaYDmdN/exec';
 const configKey='mercy_web_prod_config_v1';
 function settings(){try{return JSON.parse(localStorage.getItem(configKey)||'{}')}catch(e){return {}}}
 function reply(id,result){window.MercyReceive?.(id,result)}
