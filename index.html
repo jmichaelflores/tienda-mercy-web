@@ -967,6 +967,50 @@ body[class*="mercy-pc-"] #main>.mercy-unified-carousel .mercy-slide-pager{margin
  #main .pos-layout{padding-bottom:12px}
  #nav{padding-top:8px;padding-bottom:8px}
 }
+</style><style id="mercy-pc-screen-specific-fit-2026">
+/* Cambios visibles por pantalla en PC, sin modificar movil ni APK. */
+@media (min-width:768px){
+ #main[data-mercy-screen="Inicio"] .grid,
+ #main[data-mercy-screen="Productos"]>.grid,
+ #main[data-mercy-screen="Fiados"] .credit-stats{grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:9px!important}
+ #main[data-mercy-screen="Productos"] .mercy-product-search{display:flex;align-items:center;gap:8px;margin:8px 0!important}
+ #main[data-mercy-screen="Productos"] .product-list,
+ #main[data-mercy-screen="Categorías"] .product-list{grid-template-columns:repeat(auto-fill,minmax(min(100%,260px),1fr))!important;gap:9px!important}
+ #main[data-mercy-screen="Productos"] .product-card,
+ #main[data-mercy-screen="Categorías"] .product-card{padding:10px!important;gap:8px!important}
+ #main[data-mercy-screen="Mercadería"] .mercy-desktop-merch-action{margin-bottom:8px!important}
+ #main[data-mercy-screen="Mercadería"] .card,
+ #main[data-mercy-screen="Reportes"] .card,
+ #main[data-mercy-screen="Fiados"] .card{padding:12px!important}
+ #main[data-mercy-screen="Fiados"] .credit-heading{margin-bottom:8px!important}
+ #main[data-mercy-screen="Fiados"] .credit-search{margin:8px 0!important}
+ #main[data-mercy-screen="Ajustes"] .mercy-setting-section{margin-bottom:7px!important}
+ #main[data-mercy-screen="Ajustes"] .mercy-setting-section>summary{padding:10px 13px!important}
+ #main[data-mercy-screen="Ajustes"] .mercy-setting-section .card{padding:12px!important}
+ #main[data-mercy-screen="Reportes"] .grid{gap:9px!important}
+ #main[data-mercy-screen="Reportes"] .row{gap:8px!important}
+ #main[data-mercy-screen^="Formulario"]>.card{max-width:100%;padding:12px!important}
+ #main[data-mercy-screen^="Formulario"] .actions{gap:8px}
+}
+@media (min-width:768px) and (max-width:1100px){
+ #main[data-mercy-screen="Inicio"] .grid,
+ #main[data-mercy-screen="Productos"]>.grid,
+ #main[data-mercy-screen="Fiados"] .credit-stats{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+ #main[data-mercy-screen="Productos"] .product-list,
+ #main[data-mercy-screen="Categorías"] .product-list{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+ #main[data-mercy-screen="Ajustes"] .mercy-large-layout-options{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+}
+@media (min-width:768px) and (max-height:750px){
+ #main[data-mercy-screen="Inicio"] .grid,
+ #main[data-mercy-screen="Productos"]>.grid,
+ #main[data-mercy-screen="Fiados"] .credit-stats{gap:6px!important}
+ #main[data-mercy-screen="Productos"] .product-card,
+ #main[data-mercy-screen="Categorías"] .product-card{padding:8px!important}
+ #main[data-mercy-screen="Reportes"] .card,
+ #main[data-mercy-screen="Mercadería"] .card,
+ #main[data-mercy-screen="Fiados"] .card{padding:9px!important}
+ #main[data-mercy-screen="Ajustes"] .mercy-setting-section>summary{padding:8px 11px!important}
+}
 </style></head><body><header><button type="button" class="brand-row mercy-brand-home" data-go="Inicio" aria-label="Ir al inicio de la tienda"><span id="storeLogo" class="brand-logo">🏪</span><span class="brand-copy"><strong id="title">Tienda Mercy</strong><small>Gestión de tienda e inventario</small></span></button><div class="mercy-header-actions"><button type="button" id="mercyGuideButton" class="mercy-icon-btn" aria-label="Iniciar guía interactiva" title="Guía de uso">❔</button><button type="button" id="mercyBellButton" class="mercy-icon-btn" aria-label="Ver notificaciones" title="Notificaciones">🔔<span id="mercyBadge" class="mercy-badge" hidden></span></button></div></header><main id="main"></main><div id="mercyToastStack" class="mercy-toast-stack" role="status" aria-live="polite"></div><div id="quickFabWrap" class="quick-fab-wrap" hidden><div id="quickFabMenu" class="quick-fab-menu" hidden><button type="button" data-action="quickNewProduct">📦 Nuevo producto</button><button type="button" data-action="quickReceive">📥 Recibir mercadería</button></div><button id="quickFab" type="button" data-action="toggleQuickFab" aria-label="Abrir acciones rápidas" aria-expanded="false">+</button></div><button id="posFab" type="button" data-action="openPosCart" aria-label="Ver carrito y finalizar compra"><span class="fab-icon">🛒</span><span class="fab-details">Ver carrito</span></button><button id="up" aria-label="Volver arriba">↑</button><nav id="nav"></nav><div id="mercyOverlay" class="mercy-overlay" hidden></div><div id="mercyTour" class="mercy-tour" hidden></div>
 <script>
 /* Conector web de produccion: mismo contrato de API que la APK. */
@@ -1499,6 +1543,7 @@ h+=`<details class="mercy-setting-section"><summary>🎨 Apariencia de la aplica
 }else if(screen==='Más'){
 h+='<h3>Más opciones</h3><div class="card">'+['Mercadería','Reportes','Categorías','Fiados','Ajustes'].map(s=>'<button class="item" style="width:100%;background:white;border-left:0;border-right:0;border-top:0;text-align:left" data-go="'+s+'"><b>'+esc(menuIcon(s))+' '+esc(menuLabel(s))+'</b><span>›</span></button>').join('')+'</div>';
 }
+$('main').dataset.mercyScreen=screen;
 $('main').innerHTML=h;
 const oldSettingsBar=document.getElementById('mercyFixedSettingsBar');
 if(oldSettingsBar)oldSettingsBar.remove();
