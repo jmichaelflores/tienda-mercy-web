@@ -807,6 +807,10 @@ body[class*="mercy-pc-"] #main>.mercy-unified-carousel .mercy-slide-pager{margin
  #main .mercy-product-search button[data-action="scanProductSearch"]{font-size:13px!important;display:inline-flex;align-items:center;justify-content:center;gap:6px;min-width:138px;padding:10px 14px;border-radius:11px;white-space:nowrap}
  #main .mercy-product-search button[data-action="scanProductSearch"]::after{content:"⌁ Leer con pistola"!important;font-size:13px!important}
 }
+</style><style id="mercy-daily-verse-style">
+.mercy-daily-verse{display:flex;align-items:flex-start;gap:14px;margin:0 0 16px;padding:17px 20px;border-radius:18px;background:linear-gradient(120deg,color-mix(in srgb,var(--pink) 11%,white),color-mix(in srgb,var(--green) 9%,white));border:1px solid color-mix(in srgb,var(--pink) 17%,transparent);color:var(--text,#27323a)}
+.mercy-verse-mark{display:grid;place-items:center;flex:0 0 36px;width:36px;height:36px;border-radius:12px;background:var(--pink);color:white;font-size:20px}
+.mercy-verse-copy{min-width:0}.mercy-verse-copy small{font-size:10px;font-weight:800;letter-spacing:.13em;color:var(--pink)}.mercy-verse-copy p{margin:7px 0;line-height:1.5;font-size:clamp(14px,1.5vw,17px);font-weight:600}.mercy-verse-copy strong{font-size:12px;color:var(--green)}
 </style></head><body><header><button type="button" class="brand-row mercy-brand-home" data-go="Inicio" aria-label="Ir al inicio de la tienda"><span id="storeLogo" class="brand-logo">🏪</span><span class="brand-copy"><strong id="title">Tienda Mercy</strong><small>Gestión de tienda e inventario</small></span></button><div class="mercy-header-actions"><button type="button" id="mercyGuideButton" class="mercy-icon-btn" aria-label="Iniciar guía interactiva" title="Guía de uso">❔</button><button type="button" id="mercyBellButton" class="mercy-icon-btn" aria-label="Ver notificaciones" title="Notificaciones">🔔<span id="mercyBadge" class="mercy-badge" hidden></span></button></div></header><main id="main"></main><div id="mercyToastStack" class="mercy-toast-stack" role="status" aria-live="polite"></div><div id="quickFabWrap" class="quick-fab-wrap" hidden><div id="quickFabMenu" class="quick-fab-menu" hidden><button type="button" data-action="quickNewProduct">📦 Nuevo producto</button><button type="button" data-action="quickReceive">📥 Recibir mercadería</button></div><button id="quickFab" type="button" data-action="toggleQuickFab" aria-label="Abrir acciones rápidas" aria-expanded="false">+</button></div><button id="posFab" type="button" data-action="openPosCart" aria-label="Ver carrito y finalizar compra"><span class="fab-icon">🛒</span><span class="fab-details">Ver carrito</span></button><button id="up" aria-label="Volver arriba">↑</button><nav id="nav"></nav><div id="mercyOverlay" class="mercy-overlay" hidden></div><div id="mercyTour" class="mercy-tour" hidden></div>
 <script>
 /* Conector web de produccion: mismo contrato de API que la APK. */
@@ -1108,12 +1112,32 @@ function mercyApplyLargeLayout(){
  document.body.classList.toggle('mercy-selling',screen==='Vender');
  document.body.classList.toggle('mercy-cart-open',screen==='Vender'&&((mercyLargeLayout==='fixed'&&window.matchMedia('(min-width:768px)').matches)||posCheckout||!!posSuccess));
 }
+const mercyDailyVerses=[
+ {ref:'Filipenses 4:13',text:'Todo lo puedo en Cristo que me fortalece.'},
+ {ref:'Proverbios 16:3',text:'Encomienda a Jehová tus obras, y tus pensamientos serán afirmados.'},
+ {ref:'Salmos 118:24',text:'Este es el día que hizo Jehová; nos gozaremos y alegraremos en él.'},
+ {ref:'Isaías 40:31',text:'Pero los que esperan a Jehová tendrán nuevas fuerzas.'},
+ {ref:'Salmos 23:1',text:'Jehová es mi pastor; nada me faltará.'},
+ {ref:'Josué 1:9',text:'Esfuérzate y sé valiente; no temas ni desmayes.'},
+ {ref:'Proverbios 3:5',text:'Fíate de Jehová de todo tu corazón, y no te apoyes en tu propia prudencia.'},
+ {ref:'Salmos 37:5',text:'Encomienda a Jehová tu camino, y confía en él; y él hará.'},
+ {ref:'Jeremías 29:11',text:'Porque yo sé los pensamientos que tengo acerca de vosotros, dice Jehová, pensamientos de paz.'},
+ {ref:'Salmos 46:1',text:'Dios es nuestro amparo y fortaleza, nuestro pronto auxilio en las tribulaciones.'},
+ {ref:'Romanos 12:12',text:'Gozosos en la esperanza; sufridos en la tribulación; constantes en la oración.'},
+ {ref:'Gálatas 6:9',text:'No nos cansemos, pues, de hacer bien; porque a su tiempo segaremos.'},
+ {ref:'Salmos 121:2',text:'Mi socorro viene de Jehová, que hizo los cielos y la tierra.'},
+ {ref:'Proverbios 16:9',text:'El corazón del hombre piensa su camino; mas Jehová endereza sus pasos.'}
+];
+function mercyDailyVerse(){
+ const d=new Date(),day=Math.floor((Date.UTC(d.getFullYear(),d.getMonth(),d.getDate())-Date.UTC(2026,0,1))/86400000);
+ return mercyDailyVerses[((day%mercyDailyVerses.length)+mercyDailyVerses.length)%mercyDailyVerses.length];
+}
 function render(){
 mercyApplyLargeLayout();
 if(posScanStream)posStopCamera();
 clearInterval(mercyCarouselTimer);mercyCarouselTimer=null;
 document.getElementById('clearCartDialog')?.remove();
-document.getElementById('iconModal')?.remove();document.getElementById('posModal')?.remove();let h=message?'<div class="notice '+(isError?'error':'')+'">'+esc(message)+'</div>':'';if(mercyConnectionError&&mercyAlertSettings.showConnection!==false)h+='<section class="mercy-alert-banner '+mercyAlertTheme()+'" role="alert"><div class="mercy-alert-icon">⚠️</div><div class="mercy-alert-content"><strong>Sin conexión con Google Sheets</strong><p>No pudimos actualizar el inventario. Comprueba tu internet y vuelve a intentarlo.</p><small>'+esc(mercyConnectionError)+'</small><div class="mercy-alert-actions"><button class="small" data-action="retryConnection">↻ Reintentar</button><button class="small" data-go="Ajustes">⚙ Ajustes</button></div></div></section>';else if(mercyLastSync&&screen==='Productos')h+='<p class="muted" style="font-size:11px">✓ Inventario sincronizado: '+esc(mercyLastSync)+'</p>';
+document.getElementById('iconModal')?.remove();document.getElementById('posModal')?.remove();let h=message?'<div class="notice '+(isError?'error':'')+'">'+esc(message)+'</div>':'';if(screen==='Inicio'){const verse=mercyDailyVerse();h+='<section class="mercy-daily-verse" aria-label="Versículo del día"><div class="mercy-verse-mark">✦</div><div class="mercy-verse-copy"><small>VERSÍCULO DEL DÍA</small><p>“'+esc(verse.text)+'”</p><strong>'+esc(verse.ref)+'</strong></div></section>'}if(mercyConnectionError&&mercyAlertSettings.showConnection!==false)h+='<section class="mercy-alert-banner '+mercyAlertTheme()+'" role="alert"><div class="mercy-alert-icon">⚠️</div><div class="mercy-alert-content"><strong>Sin conexión con Google Sheets</strong><p>No pudimos actualizar el inventario. Comprueba tu internet y vuelve a intentarlo.</p><small>'+esc(mercyConnectionError)+'</small><div class="mercy-alert-actions"><button class="small" data-action="retryConnection">↻ Reintentar</button><button class="small" data-go="Ajustes">⚙ Ajustes</button></div></div></section>';else if(mercyLastSync&&screen==='Productos')h+='<p class="muted" style="font-size:11px">✓ Inventario sincronizado: '+esc(mercyLastSync)+'</p>';
 if(screen==='Inicio'){
 let low=products.filter(p=>Number(p.existencia)<=Number(p.minimo)).length;
 const counts=new Map(products.map(p=>[String(p.codigo),{p,units:0,profit:0,hasCost:false,missing:false}]));
